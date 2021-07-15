@@ -563,7 +563,7 @@ public class MemberServiceImpl implements MemberService {
  
  ## 탐색 위치와 기본 스캔 대상
  
- + 1) 탐색 위치
+ + 1.탐색 위치
  ```java
  @ComponentScan(
         basePackages = "hello.core.member",
@@ -576,7 +576,7 @@ public class MemberServiceImpl implements MemberService {
  
    > 설정 정보는 프로젝트 시작 루트 위치에 둬야 함!(ex) com.hello)
 
- + 2) 기본 스캔 대상
+ + 2.기본 스캔 대상
    + `@Component` : 컴포넌트 스캔에서 사용
    + `@Controller` : 스프링 MVC 컨트롤러에서 사용
    + `@Service` : 스프링 비즈니스 로직에서 사용
@@ -615,10 +615,115 @@ public class MemberServiceImpl implements MemberService {
   + includeFilters에 @MyIncludeCompenet을 추가하여 BeanA만 스프링 빈에 등록됌
     
 ## 빈의 중복 등록과 충돌 
-+ 1) 자동 빈 등록 vs 자동 빈 등록 : `ConflictingBeanDifintionException` 발생
-+ 2) 수동 빈 등록 vs 자동 빈 등록 : 수동 등록 빈이 우선순위를 가짐(자동 빈을 오버라이딩)
++ 1. 자동 빈 등록 vs 자동 빈 등록 : `ConflictingBeanDifintionException` 발생
++ 2. 수동 빈 등록 vs 자동 빈 등록 : 수동 등록 빈이 우선순위를 가짐(자동 빈을 오버라이딩)
   + But Spring Boot에서는 오류가 남(잡기 어려운 버그가 생성되기 때문에)
 
+
+
 # 의존관계 자동 주입
+
+## 의존관계 주입 방법
+ 
+ 1) 생성자 주입
+ 
+  + 생성자 통해서 의존관계 주입, 빈 등록과 관계 주입이 동시에 일어남
+  + 생성자 호출 시점에만 1번 호출되기 때문에, **불변, 필수** 의존관계에 사용
+  
+  > 생성자가 1개 일시, @Autowired 생략 가능
+  ```java
+  @Component
+public class OrderServiceImpl implements  OrderService{
+
+    //final => 생성자 주입에서만 붙일 수 있음
+    private final MemberRepository memberRepository;
+    private final DiscountPolicy discountPolicy;   
+  
+    // @Autowired
+    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
+        this.memberRepository = memberRepository;
+        this.discountPolicy = discountPolicy;
+    }
+  ```
+  + 순수한 자바 코드 테스트(Spring X)가 가능하며, 오직 생성자 주입에서만 final 키워드 사용 가능
+  
+ 2) setter 주입
+  + 필드 값 변경하는 수정자 메서드 통해 관계 주입
+  + **선택, 변경** 가능성 있는 의존관계에 사용
+ ```java
+ @Component
+ public class OrderServiceImpl implements  OrderService {
+
+    private MemberRepository memberRepository;
+    private DiscountPolicy discountPolicy;
+
+    //@Autowired(required = false) : 주입할 대상이 없어도 동작
+    @Autowired
+    public void setMemberRepository(MemberRepository memberRepository) {
+    this.memberRepository = memberRepository;
+    }
+
+    @Autowired
+    public void setDiscountPolicy(DiscountPolicy discountPolicy) {
+    this.discountPolicy = discountPolicy;
+    }
+ }
+ ```
+ 
+ 3) 필드 주입
+  + 외부에서 변경 불가능하여 테스트 하기 어려운 단점이 있음
+  + DI 프레임워크 없이 순수 자바 코드로 불가능
+    + 애플리케이션 실제 코드와 관계 없는 테스트 코드에서는 사용 가능
+  ```java
+  @Component
+  public class OrderServiceImpl implements OrderService {
+     @Autowired private MemberRepository memberRepository;
+     @Autowired private DiscountPolicy discountPolicy;
+  }
+  ``` 
+  
+ 4) 일반 메서드 주입(잘 사용 X)
+ ```java
+  @Component
+  public class OrderServiceImpl implements OrderService {
+      private MemberRepository memberRepository;
+      private DiscountPolicy discountPolicy;
+
+      @Autowired
+      public void init(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
+         this.memberRepository = memberRepository;
+         this.discountPolicy = discountPolicy;
+      }
+  }
+ ```
+ 
+## 옵션 처리
+ + 자동 주입 대상을 옵션으로 처리( 주입할 스프링 빈 없어도 동작 가능하도록)
+ ```java
+  static class TestBean{
+
+        //Member 는 빈으로 등록되어 있지 X
+        @Autowired(required = false)
+        public void setNoBean1(Member noBean1){
+            System.out.println("noBean1 = " + noBean1);  //X
+        }
+
+        @Autowired
+        public void setNoBean2(@Nullable Member noBean2){
+            System.out.println("noBean2 = " + noBean2);  //null
+        }
+
+        @Autowired
+        public void setNoBean3(Optional<Member> noBean3){
+            System.out.println("noBean3 = " + noBean3);  //Optional.empty
+        }
+    }
+ ```
+  + `@Autowired(required = false)` : 메소드 호출 자체가 안됌
+  + `@Nullable` : 자동 주입 대상 없으면 null이 입력
+  + `Optional<>` : 자동 주입 대상 없으면 'Optional.empty' 입력
+
+
+ 
 
   
