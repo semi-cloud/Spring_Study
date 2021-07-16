@@ -6,7 +6,8 @@ https://www.notion.so/Spring-Study-5f739e3c70ca4d859a50a4758825e485
 |  <center>기간</center> |  <center>진도 현황</center> | 
 |:--------|:--------:|
 |**06.30 - 07.06** | <center>스프링 입문 </center> |
-|**07.07 - 07.14** | <center>스프링 핵심 원리 </center> |
+|**07.07 - 07.14** | <center>스프링 핵심 원리(1) </center> |
+|**07.15 - 07.21** | <center>스프링 핵심 원리(2) </center> |
  
  
 ## :pencil2: Referenced
