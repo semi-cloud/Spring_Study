@@ -730,7 +730,7 @@ public class OrderServiceImpl implements  OrderService{
   + 이름 다르지만 같은 타입의 빈이 2개 이상 존재시 => NoUniqueBeanDefntionException 발생!
 
  #### :bulb: Solution
-  1. **@Autowired 필드 명 매칭**
+ 1. **@Autowired 필드 명 매칭**
    + 타입 매칭의 결과가 2개 이상 : 필드명 또는 파라미터 명으로 빈 이름 매칭
    ```java
     @Autowired
@@ -739,13 +739,14 @@ public class OrderServiceImpl implements  OrderService{
         this.discountPolicy = rateDiscountPolicy;
     }  
    ```
-  2.**@Qualifier 사용**
+ 2.**@Qualifier 사용**
    + 추가 구분자를 붙여주는 일종의 옵션, 빈 이름 변경하는 것이 아님!
-   ``java
+   ```java
    @Component
    @Qualifier("mainDiscountPolicy")
    public class RateDiscountPolicy implements DiscountPolicy {}   
    ```
+   
    ```java
    @Component
    @Qualifier("fixDiscountPolicy")
@@ -759,3 +760,83 @@ public class OrderServiceImpl implements  OrderService{
       this.discountPolicy = discountPolicy;
    }   
    ```
+   + @Qualifier("mainDiscountPolicy") 못찾을시, 같은 이름의 스프링 빈을 찾고 없으면 예외 발생
+ 3.**@Primary 사용**
+  + `@Primary` : 이 Annotation이 붙은 빈이 우선순위를 가짐
+    + 주로 메인 데이터베이스의 커넥션을 획득하는 스프링 빈에서 사용하며, 서브 데이터 베이스는 `@Qualifier`를 지정해 명시적으로 획득하도록 사용
+  ```java 
+  @Component
+  @Primary
+  public class RateDiscountPolicy implements DiscountPolicy {}  //rate에 우선권을 준다.
+  @Component
+  public class FixDiscountPolicy implements DiscountPolicy {}
+  ```
+  
+ 4.**직접 Annotation 생성**
+ ```java 
+  //잘못 입력하는 등의 컴파일 오류 잡기 위해 직접 annotation 생성
+  @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+  @Retention(RetentionPolicy.RUNTIME)
+  @Inherited
+  @Documented
+  @Qualifier("mainDiscountPolicy")
+  public @interface MainDiscountPolicy {
+  }
+ ```
+  + 사용하려는 빈과 OrderServiceImpl 생성자 파라미터 앞에 @MainDiscountPolicy 붙이면 됌 
+  
+ ## 모든 빈 조회
+ 
+ > 클라이언트가 할인의 종류를 선택할 수 있다고 가정하면, 해당 타입의 스프링 빈이 모두 필요
+ ```java
+ public class AllBeanTest {
+
+    @Test
+    void findAllBean() {
+        ApplicationContext ac = new AnnotationConfigApplicationContext(AutoAppConfig.class, DiscountService.class);
+        DiscountService discountService = ac.getBean(DiscountService.class);
+        Member member = new Member(1L, "userA", Grade.VIP);
+        int discountPrice = discountService.discount(member, 10000, "fixDiscountPolicy");
+
+        assertThat(discountService).isInstanceOf(DiscountService.class);
+        assertThat(discountPrice).isEqualTo(1000);
+
+        int rateDiscountPrice = discountService.discount(member, 10000, "fixDiscountPolicy");
+        assertThat(rateDiscountPrice).isEqualTo(1000);
+
+    }
+
+    //AnnotationConfigApplicationContext(DiscountService.class) : 자동으로 스프링 빈으로 등록해줌
+    static class DiscountService {
+        private final Map<String, DiscountPolicy> policyMap;
+        private final List<DiscountPolicy> policies;
+
+        @Autowired
+        public DiscountService(Map<String, DiscountPolicy> policyMap, List<DiscountPolicy> policies) {
+            this.policyMap = policyMap;
+            this.policies = policies;
+            System.out.println("policyMap = " + policyMap);  //{ name1 : object1, name2 : object2 .. }
+            System.out.println("policies = " + policies); 
+        }
+
+        public int discount(Member member, int price, String discountCode) {
+            DiscountPolicy discountPolicy = policyMap.get(discountCode);  //rate or fix discountpolicy 넘어옴
+            return discountPolicy.discount(member, price);
+        }
+    }
+}
+```
+  + `Map<>` : map의 키에 스프링 빈의 이름을 넣어주고, 그 값으로 해당 타입으로 조회한 모든 스프링 빈을 담아줌
+  
+ #### :pencil2: 자동과 수동의 올바른 실무 운영 기준
+ 
+  + `업무 로직 빈` : 웹 지원 컨트롤러, 서비스, 리포지토리 등 비즈니스 요구사항을 개발할때 추가/수정 되는 로직. 문제의 원인 파악이 쉬워 **자동 빈 등록 기능 사용**
+  > 업무 로직에서 다형성 활용 케이스
+    + Map<String, DiscountPolicy>에 주입될 빈들에 대한 정보는, 1)별도의 설정정보 만들어 수동 등록 하거나, 2)자동으로 할 시 같은 패키지로 묶어놔야함
+     
+  + `기술 지원 빈` : 업무 로직 지원하기 위한 하부 기술, 공통 관심사(AOP)처리 시 주로 사용. 애플리케이션 전반에 광범위한 영향을 미치기 때문에 **수동 빈으로 등록**하여 설정 정보에서 명확하게 드러내야함
+
+ 
+ 
+ 
+
