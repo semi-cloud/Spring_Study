@@ -831,9 +831,9 @@ public class OrderServiceImpl implements  OrderService{
  #### :pencil2: 자동과 수동의 올바른 실무 운영 기준
  
   + `업무 로직 빈` : 웹 지원 컨트롤러, 서비스, 리포지토리 등 비즈니스 요구사항을 개발할때 추가/수정 되는 로직. 문제의 원인 파악이 쉬워 **자동 빈 등록 기능 사용**
-  > 업무 로직에서 다형성 활용 케이스
-  + Map<String, DiscountPolicy>에 주입될 빈들에 대한 정보는, 1)별도의 설정정보 만들어 수동 등록 하거나, 2)자동으로 할 시 같은 패키지로 묶어놔야함
-     
+    + > 업무 로직에서 다형성 활용 케이스
+    + Map<String, DiscountPolicy>에 주입될 빈들에 대한 정보는, 1)별도의 설정정보 만들어 수동 등록 하거나, 2)자동으로 할 시 같은 패키지로 묶어놔야함
+
   + `기술 지원 빈` : 업무 로직 지원하기 위한 하부 기술, 공통 관심사(AOP)처리 시 주로 사용. 애플리케이션 전반에 광범위한 영향을 미치기 때문에 **수동 빈으로 등록**하여 설정 정보에서 명확하게 드러내야함
 
 
@@ -921,7 +921,7 @@ public class OrderServiceImpl implements  OrderService{
   + 코드를 고칠 수 없는 외부 라이브러리에도 초기화, 종료 메서드를 적용 가능
   + `destoryMethod` : 추론 기능이 있어서 외부 라이브러리의 종료 메소드인 close, shutdown 자동 호출
 
-3. **@PostConstruct, @PreDestory**
+3.**@PostConstruct, @PreDestory**
  ```java
   @PostConstruct
   public class NetworkClient{
@@ -945,7 +945,6 @@ public class OrderServiceImpl implements  OrderService{
 
 
 
-# 빈 스코드
-
+# 빈 스코프
 
 
