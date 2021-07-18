@@ -532,7 +532,7 @@ public class AppConfig {
 # 컴포넌트 스캔
 
 ## 컴포넌트 스캔과 의존관계 자동 주입
- + SPRING은 설정 정보 없이도 자동으로 스프링 빈을 등록하고, 의존관계도 자동으로 주입해줌
+ + SPRING은 설정 정보(appConfig) 없이도 자동으로 스프링 빈을 등록하고, 의존관계도 자동으로 주입해줌
  
  > `@ComponentScan` : '@Component` 붙은 모든 클래스 스프링 빈 자동 등록
  ```java
@@ -559,7 +559,9 @@ public class MemberServiceImpl implements MemberService {
     public MemberServiceImpl(MemberRepository memberRepository){
         this.memberRepository = memberRepository;
     }
- ```
+ ``` 
+  + 타입으로 조회하기 때문에 ac.getBean(MemberRepository.class)와 유사하게 동작
+  + 이름 다르지만 같은 타입의 빈이 2개 이상 존재 => NoUniqueBeanDefntionException 발생!
  
  ## 탐색 위치와 기본 스캔 대상
  
@@ -723,7 +725,37 @@ public class OrderServiceImpl implements  OrderService{
   + `@Nullable` : 자동 주입 대상 없으면 null이 입력
   + `Optional<>` : 자동 주입 대상 없으면 'Optional.empty' 입력
 
+## Bean이 여러개인 경우
+ + `Autowired` : 타입(Interface)으로 조회하기 때문에 ac.getBean(DiscountPolicy.class)와 유사하게 동작
+  + 이름 다르지만 같은 타입의 빈이 2개 이상 존재시 => NoUniqueBeanDefntionException 발생!
 
- 
-
-  
+ #### :bulb: Solution
+  1. **@Autowired 필드 명 매칭**
+   + 타입 매칭의 결과가 2개 이상 : 필드명 또는 파라미터 명으로 빈 이름 매칭
+   ```java
+    @Autowired
+    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy rateDiscountPolicy) {
+        this.memberRepository = memberRepository;
+        this.discountPolicy = rateDiscountPolicy;
+    }  
+   ```
+  2.**@Qualifier 사용**
+   + 추가 구분자를 붙여주는 일종의 옵션, 빈 이름 변경하는 것이 아님!
+   ``java
+   @Component
+   @Qualifier("mainDiscountPolicy")
+   public class RateDiscountPolicy implements DiscountPolicy {}   
+   ```
+   ```java
+   @Component
+   @Qualifier("fixDiscountPolicy")
+   public class FixDiscountPolicy implements DiscountPolicy {}
+   ```  
+   > 생성자 자동 주입
+   ```java
+   @Autowired
+   public OrderServiceImpl(MemberRepository memberRepository, @Qualifier("mainDiscountPolicy") DiscountPolicy discountPolicy) {
+      this.memberRepository = memberRepository;
+      this.discountPolicy = discountPolicy;
+   }   
+   ```
