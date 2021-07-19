@@ -1180,13 +1180,13 @@ public class OrderServiceImpl implements  OrderService{
      }
  }
  ```
-  +`MyLogger` : request scope이기 때문에, requestURL과 같은 웹 관련 정보를 서비스 계층에서 파라미터로 넘기지 않고 MyLogeer 멤버 변수에 저장하여 코드 유지 가능
+  + `MyLogger` : request scope이기 때문에, requestURL과 같은 웹 관련 정보를 서비스 계층에서 파라미터로 넘기지 않고 MyLogeer 멤버 변수에 저장하여 코드 유지 가능
   + :fire: 웹과 관련된 부분은 컨트롤러까지만 사용, **서비스 계층은 웹 기술에 종속되면 안됌!**
 
 > 컨테이너에게 빈을 요청하는 단계는 의존관계 주입 단계가 아니라 뒤로 지연시켜야 오류 발생 X
 
 #### Request scope와 Provider
- +`ObjectProvider`: ObjectProvider.getObject() 를 호출하는 시점까지 request scope 빈의 생성을 지연 가능
+ + `ObjectProvider`: ObjectProvider.getObject() 를 호출하는 시점까지 request scope 빈의 생성을 지연 가능
  > LogDemoController 중 일부
  ```java
    @RequestMapping("log-demo")
