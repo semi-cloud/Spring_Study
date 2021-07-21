@@ -68,16 +68,16 @@
   
 **4.HTTP 메시지**</br>
 > 요청 메시지
-+ 1) Start Line : Request-line(HTTP 메서드 + 요청대상 + HTTP Version)
+1) Start Line : Request-line(HTTP 메서드 + 요청대상 + HTTP Version)</br>
   + `HTTP 메서드`: GET(리소스 조회)/POST(요청 내역 처리)
  
-+ 2) HTTP 헤더 : field-name: field-value ex) Host:www.google.com
+2) HTTP 헤더 : field-name: field-value ex) Host:www.google.com</br>
   + HTTP 전송에 필요한 모든 부가정보가 담겨 있음
   
-+ 3) HTTP 메시지 바디 : 실제 전송할 데이터가 담겨 있음
+3) HTTP 메시지 바디 : 실제 전송할 데이터가 담겨 있음</br>
 
 > 응답 메시지
-+ 1) Start Line : Status-line(HTTP Version + **Status Code** + 이유 문구)
+1) Start Line : Status-line(HTTP Version + **Status Code** + 이유 문구)
   + `Status code` : 200(성공)/400(클라이언트 요청 오류)/500(서버 내부 오류)
 
 
@@ -91,5 +91,35 @@
      + ex) 회원 조회/members/{id}, 회원 등록/members/{id}...
   + `행위` : 조회,등록,삭제,변경..  
 
+#### HTTP 메서드-GET,POST
 
+**1)GET** : 리소스 조회</br>
+  + 서버에 전달하고 싶은 데이터=> query(파라미터/스트링)를 통해 전달!
+  + `안전` => 호출해도 대상 리소스 변경이 X
+  + `멱등` => 몇번을 호출하든 최종 결과가 같음
+  + `캐시가능(Cacheable)` => 응답 결과 리소스를 캐시해서 사용해도 되는가?
+
+**2)POST** : 요청 데이터 처리(등록)</br>
+  + Message Body를 통해 서버로 요청 데이터를 전달
+  + 서버는 데이터를 처리
+    + 신규 리소스 등록
+    + 요청 데이터 처리 : 단순 데이터 생성/변경을 넘어서 **프로세스 처리**해야하는 경우 EX)주문완료->배달시작
+    + 다른 메서드로 처리 애매한 경우 
+  + `멱등 XX` => 호출에 따라 최종 결과가 달라짐   
+
+> 멱등(Idempotent) 
+  + 자동 복구 메커니즘에 활용
+  + 서버가 TIMEOUT되어 정상 응답을 못주었을때, 클라이언트가 요청을 반복해도 되는가?의 판단근거
+  + BUT, 외부 요인으로 중간에 리소스가 변경되는것을 고려 X
+
+**3)PUT** : 리소스를 **완전 대체**, 해당 리소스가 없으면 생성</br>
+  + :star2: 클라이언트가 리소스를 식별해야함
+    + `PUT` : PUT /members **/100** HTTP/1.1 
+    + `POST`: POST /members HTTP/1.1 
+  + `멱등` => 몇번을 호출하든 최종 결과가 같음
+ 
+**4)PATCH** : 리소스 부분 변경</br>
+
+**5)DELETE** : 리소스 삭제</br>
+  + `멱등` => 몇번을 호출하든 최종 결과가 같음
 
