@@ -37,7 +37,8 @@
 + Uniform Resource Identifier로써, 통일된 방식으로 식별 가능한 모든 자원(리소스)을 구분하는데 필요한 정보
   + `URL`: Resource Locator, 자원의 위치를 지정 ex)foo://example.com:8042
   + `URN`: Resource Name, 자원엥 이름을 부여  ex)urn:example:animal:
-  
+<img src = "https://user-images.githubusercontent.com/71436576/126471535-8288d3c3-dbe8-4beb-95c8-d95c1eeea92d.png" width="50%" height="50%">
+
 #### URL
 + **scheme**://[userinfo@]**host**[:port][/path][?query][#fragment]
   + https://www.google.com:443/search?q=hello&hl=ko
@@ -69,16 +70,21 @@
 **4.HTTP 메시지**</br>
 > 요청 메시지
 1) Start Line : Request-line(HTTP 메서드 + 요청대상 + HTTP Version)</br>
-  + `HTTP 메서드`: GET(리소스 조회)/POST(요청 내역 처리)
+    + `HTTP 메서드`: GET(리소스 조회)/POST(요청 내역 처리)
  
 2) HTTP 헤더 : field-name: field-value ex) Host:www.google.com</br>
-  + HTTP 전송에 필요한 모든 부가정보가 담겨 있음
+    + HTTP 전송에 필요한 모든 부가정보가 담겨 있음
   
 3) HTTP 메시지 바디 : 실제 전송할 데이터가 담겨 있음</br>
 
 > 응답 메시지
 1) Start Line : Status-line(HTTP Version + **Status Code** + 이유 문구)
   + `Status code` : 200(성공)/400(클라이언트 요청 오류)/500(서버 내부 오류)
+
+<img src = "https://user-images.githubusercontent.com/71436576/126471171-8903d3d1-4f4b-4c28-9e16-968ce71c766b.png" width="50%" height="50%">
+
+
+
 
 
 ## HTTP 메서드
