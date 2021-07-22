@@ -129,3 +129,46 @@
 **5)DELETE** : 리소스 삭제</br>
   + `멱등` => 몇번을 호출하든 최종 결과가 같음
 
+### HTTP 메서드 활용
+#### :pushpin: 클라이언트에서 서버로 데이터 전송
+
+> 쿼리 파라미터를 통한 데이터 전송
+  + GET
+  + 주로 정렬 필터(검색어)
+> 메시디 바디를 통한 데이터 전송
+  + POST, PUT, PATCH
+  + 회원 가입, 상품 주문, 리소스 등록, 리소스 변경
+  
+> 다음 네가지의 상황 예시
+1) 정적 데이터 조회</br>
+  + 조회는 GET 사용(쿼리 파라미터 없이 리소스 경로로 단순하게 조회)
+  + URL 경로를 찾아서, 이미지 리소스를 클라이언트에게 반환
+<img src = "https://user-images.githubusercontent.com/71436576/126594283-01bd703d-4154-4357-a070-12d93a170252.png" width=50% height=50%>
+
+2) 동적 데이터 조회</br>
+  + 주로 검색,게시판 목록에서 정렬 필터(검색어)
+  + 조회는 GET 사용(쿼리 파라미터를 이용해 서버로 데이터 전달)
+  + 서버는 쿼리 파라미터를 기반으로 정렬필터해서, 결과를 동적으로 생성
+  
+ <img src = "https://user-images.githubusercontent.com/71436576/126594288-f7d64cd0-0fff-41ec-a713-cb00c12189d1.png width=50% height=50>
+
+3) HTML Form을 통한 데이터 전송</br>
+  + POST 전송-저장 
+    + form의 내용을 메시지 바디를 통해 전송(key=value, 쿼리 파라미터 형식)
+    + 전송 데이터를 url encoding 처리
+  <img src = "https://user-images.githubusercontent.com/71436576/126594348-f4459c9c-e8d5-452e-97df-8ed95c7dd355.png" width=50% height=50%> 
+  
+  + GET 전송-저장 : 쿼리 파라미터 형식
+ <img src = "https://user-images.githubusercontent.com/71436576/126594376-7212aa06-5420-4828-b66e-39c36f3cb587.png" width=50% height=50%>  
+
+  + GET 전송-조회
+ <img src = "https://user-images.githubusercontent.com/71436576/126594399-78564804-33f3-482e-b673-3994efe00cba.png" width=50% height=50%>  
+
+  + multipart/from-data : 파일 업로드 같은 바이너리 데이터 전송시 사용(여러 종류의 파일 가능)
+  
+  4) HTTP API를 통한 데이터 전송</br>
+  + 백엔드 시스템 통신
+  + 앱 클라이언트 : 안드로이드/아이폰
+  + 웹 클라이언트
+    + `AJAX` : hTML의 Form 대신 자바 스크립트를 통한 통신
+ <img src = "https://user-images.githubusercontent.com/71436576/126594428-9431f6ab-6327-4963-917c-92e15b3fb10a.png"  width=50% height=50%> 
