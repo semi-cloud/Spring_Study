@@ -150,7 +150,7 @@
   + 조회는 GET 사용(쿼리 파라미터를 이용해 서버로 데이터 전달)
   + 서버는 쿼리 파라미터를 기반으로 정렬필터해서, 결과를 동적으로 생성
   
- <img src = "https://user-images.githubusercontent.com/71436576/126594288-f7d64cd0-0fff-41ec-a713-cb00c12189d1.png width=50% height=50>
+ <img src = "https://user-images.githubusercontent.com/71436576/126594288-f7d64cd0-0fff-41ec-a713-cb00c12189d1.png width=50% height=50%>
 
 3) HTML Form을 통한 데이터 전송</br>
   + POST 전송-저장 
@@ -171,4 +171,24 @@
   + 앱 클라이언트 : 안드로이드/아이폰
   + 웹 클라이언트
     + `AJAX` : hTML의 Form 대신 자바 스크립트를 통한 통신
- <img src = "https://user-images.githubusercontent.com/71436576/126594428-9431f6ab-6327-4963-917c-92e15b3fb10a.png"  width=50% height=50%> 
+ <img src = "https://user-images.githubusercontent.com/71436576/126594428-9431f6ab-6327-4963-917c-92e15b3fb10a.png"  width=50% height=50%>
+  
+#### :pushpin: HTTP API 설계 예시
+
+**1) HTTP API-Collection**</br>
+  + **POST 기반 등록** ex)회원 관리 API 제공
+  + 신규 자원을 POST 기반으로 등록할시 주의점
+    + 클라이언트는 등록될 리소스의 URI을 모름 ex)POST /members
+    + :star2: **서버**가 새로 등록된 리소스 URI를 생성! ex)Location:/members/100
+  + `Collection` : 서버가 관리하는 리소스 디렉토리(URI 생성 후 관리)  ex)/members
+  
+**2) HTTP API-Store**</br>
+  + **PUT 기반 등록** ex) 정적 컨텐츠 관리, 원격 파일 관리
+  + 신규 자원을 PUT 기반으로 등록할시 주의점
+    + :star2: **클라이언트**는 리소스 URI를 알고 지정해줘야함 ex)PUT /files/star.jpg
+  + `Store` : 클라이언트가 관리하는 리소스 저장소(URI 알고 관리)  ex)/files
+  
+**3) HTML Form 사용**</br>
+  + HTML Form은 GET, POST 만 지원
+  + `컨트롤 URI(Controller)` : 동사로 된 리소스 경로 ex)POST의 /new,/edit,/delete
+    + 문서,컬렉션,스토어로 해결하기 애매한 경우에만 사용!(HTTP API 포함)
