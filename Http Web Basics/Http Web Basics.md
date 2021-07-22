@@ -1,17 +1,17 @@
 # HTTP
 
 ## Internet Network
-#### IP
+### IP
 + `IP` : 인터넷 프로토콜로써, 지정한 IP Address에 **Packet**(통신 단위)로 데이터 전달
   + EX) 100.100.100.1 -> 200.200.200.2
   + Network Layer(3)의 프로토콜
   
-#### IP의 한계
+### IP의 한계
 + 비연결성 : 대상이 서비스 불능이여도 패킷 전송
 + 비신뢰성 : 패킷 소실, 전달 순서에 문제 발생 가능
 + 프로그램 구분 : 같은 IP 사용 서버에서 통신 애플리케이션이 둘 이상일 경우 구분 불가능
  
-#### TCP, UDP
+### TCP, UDP
 + `TCP` : 전송 제어 프로토콜로서, 3-way-handshake **연결과정** 이후에 데이터 전송하므로 순서와 신뢰성 보장
   + `TCP Segment` : 출발지/도착지 PORT 정보, 전송 제어/순서/검증 정보,전송 데이터 등이 담겨있음
   + Transport Layer(4)의 프로토콜
@@ -33,13 +33,13 @@
   어떤 Process(프로세스)에서 데이터를 받을 것인지 를 알아야 하는데,이 때 쓰이는 것이 Port Number!
   ```
  
-#### URI
+### URI
 + Uniform Resource Identifier로써, 통일된 방식으로 식별 가능한 모든 자원(리소스)을 구분하는데 필요한 정보
   + `URL`: Resource Locator, 자원의 위치를 지정 ex)foo://example.com:8042
   + `URN`: Resource Name, 자원엥 이름을 부여  ex)urn:example:animal:
 <img src = "https://user-images.githubusercontent.com/71436576/126471535-8288d3c3-dbe8-4beb-95c8-d95c1eeea92d.png" width="50%" height="50%">
 
-#### URL
+### URL
 + **scheme**://[userinfo@]**host**[:port][/path][?query][#fragment]
   + https://www.google.com:443/search?q=hello&hl=ko
   + `query` : 웹 서버에 제공하는 파라미터, 문자 형태(쿼리 파라미터,쿼리스트링)
@@ -48,7 +48,7 @@
 ## HTTP
   + Hypertext, 즉 모든 종류의 정보(html,이미지,JSON,XML 등)를 주고받을 수 있는 프로토콜
 
-#### HTTP 특징
+### HTTP 특징
 **1. 클라이언트-서버 구조**</br>
   + `클라이언트`가 서버에 요청을 보내고(Request), 응답을 대기 / UI, 사용성에 집중
   + `서버`는 요청에 대한 결과 만들어서 응답(Response) / 데이터, 비즈니스 로직에 집중
@@ -67,7 +67,7 @@
  + 서버는 클라이언트 요청에 대한 응답을 보낸 후, 바로 연결을 끊어 최소한의 자원만 사용하도록 함
     + BUT, 연결과정의 시간과 자원이 낭비됌 => HTTP 지속 연결(Persistent Connection)로 문제 해결! 
   
-**4.HTTP 메시지**</br>
+**4. HTTP 메시지**</br>
 > 요청 메시지
 1) Start Line : Request-line(HTTP 메서드 + 요청대상 + HTTP Version)</br>
     + `HTTP 메서드`: GET(리소스 조회)/POST(요청 내역 처리)
@@ -89,7 +89,7 @@
 
 ## HTTP 메서드
 
-#### API URI 설계
+### API URI 설계
 
 :seedling: **리소스 식별, URI 계층 구조**를 활용해라!</br>
 + URI는 리소스만 식별, 행위(메서드)는 HTTP 메서드를 이용
@@ -97,7 +97,7 @@
      + ex) 회원 조회/members/{id}, 회원 등록/members/{id}...
   + `행위` : 조회,등록,삭제,변경..  
 
-#### HTTP 메서드-GET,POST
+### HTTP 메서드-GET,POST
 
 **1)GET** : 리소스 조회</br>
   + 서버에 전달하고 싶은 데이터=> query(파라미터/스트링)를 통해 전달!
