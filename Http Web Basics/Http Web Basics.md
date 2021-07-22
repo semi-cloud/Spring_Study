@@ -192,4 +192,5 @@
   + HTML Form은 GET, POST 만 지원
   + `컨트롤 URI(Controller)` : 동사로 된 리소스 경로 ex)POST의 /new,/edit,/delete
     + 문서,컬렉션,스토어로 해결하기 애매한 경우에만 사용!(HTTP API 포함)
-<img src = "https://user-images.githubusercontent.com/71436576/126597453-ff1896d8-c247-4091-8715-0b07a8cb7516.png  width=50% height=50%>
+  
+ <img src = "https://user-images.githubusercontent.com/71436576/126597453-ff1896d8-c247-4091-8715-0b07a8cb7516.png width=50% height=50%>
