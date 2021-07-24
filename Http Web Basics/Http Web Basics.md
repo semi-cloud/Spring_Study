@@ -204,11 +204,11 @@
 ### 2xx(Successful)
   + 클라이언트의 요청을 성공적으로 처리
   + `200 OK` : 요청 성공
-  + **201 Created** : 요청 성공하여 새로운 리소스 생성됌
+  + `201 Created` : 요청 성공하여 새로운 리소스 생성됌
     + `Location 헤더 필드` : 생성된 리소스의 URI 정보가 담겨있음 ex)Location:/members/100
-  + **202 Accepted** : 요청 접수되었으나 처리가 완료 X
+  + `202 Accepted` : 요청 접수되었으나 처리가 완료 X
     + 배치 처리에서 사용
-  + **204 No Content** : 서버가 요청을 성공적으로 수행했지만, 응답 페이로드 본문에 보낼 데이터가 X
+  + `204 No Content` : 서버가 요청을 성공적으로 수행했지만, 응답 페이로드 본문에 보낼 데이터가 X
     + ex) 웹 문서 편집기에서의 Save 버튼 => 결과 내용이 필요 X, 성공 여부만 중요할때!
    
 ### 3xx(Redirection)
@@ -216,8 +216,17 @@
   
 > :question: Redirection
   + 웹 브라우저는 3xx 응답 결과에 Location 헤더가 존재 => Location 위치로 자동 이동(redirect)
+<img src = "https://user-images.githubusercontent.com/71436576/126860851-3d777a77-8526-4f37-9d77-feef6dc5ce35.png" width=50% height=50%>
+
+> Redirection의 종류
   
-> Redirection의 종류  
 **1) 영구 리다이렉션 : 301,308**</br>
   + 리소스의 URI가 영구적으로 이동하여 원래 URL를 사용X(검색엔진에서 변경 인지)
-  + `
+  + `301 Moved Permanently` : redirect시 요청 메서드가 GET으로 변하고, 본문 제거될수 있음
+  + `308 Permanent Redirect` : redirect시 요청 메서드와 본문 유지(POST -> POST) 
+  
+**2) 일시적 리다이렉션 : 302,307,303**</br>
+  + 리소스의 URI가 일시적으로 변경(검색 엔진에서 변경하면 안됌!)
+  + `302 Found`: redirect시 요청 메서드가 GET으로 변하고, 본문 제거될수 있음(MAY)
+  + `307 Temporary Redirect`: redirect시 요청 메서드와 본문 유지(MUST NOT)
+  + `303 See Other`: redierct시 요청 메서드가 GET으로 변경
