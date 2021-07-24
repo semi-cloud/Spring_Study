@@ -194,3 +194,30 @@
     + 문서,컬렉션,스토어로 해결하기 애매한 경우에만 사용!(HTTP API 포함)
   
  <img src = "https://user-images.githubusercontent.com/71436576/126597453-ff1896d8-c247-4091-8715-0b07a8cb7516.png width=50% height=50%>
+
+
+## HTTP 상태 코드
+  + `상태 코드` : 클라이언트가 보낸 요청의 처리 상태를 **응답**에서 알려주는 기능
+    + 서버가 인식할 수 없는 상태코드를 반환 => 클라이언트는 상위 상태 코드로 해석!
+### 1xx(Informational)
+
+### 2xx(Successful)
+  + 클라이언트의 요청을 성공적으로 처리
+  + `200 OK` : 요청 성공
+  + **201 Created** : 요청 성공하여 새로운 리소스 생성됌
+    + `Location 헤더 필드` : 생성된 리소스의 URI 정보가 담겨있음 ex)Location:/members/100
+  + **202 Accepted** : 요청 접수되었으나 처리가 완료 X
+    + 배치 처리에서 사용
+  + **204 No Content** : 서버가 요청을 성공적으로 수행했지만, 응답 페이로드 본문에 보낼 데이터가 X
+    + ex) 웹 문서 편집기에서의 Save 버튼 => 결과 내용이 필요 X, 성공 여부만 중요할때!
+   
+### 3xx(Redirection)
+  + 요청을 완료하기 위해, 유저 에이전트(클라이언트 프로그램)의 추가 조치 필요
+  
+> :question: Redirection
+  + 웹 브라우저는 3xx 응답 결과에 Location 헤더가 존재 => Location 위치로 자동 이동(redirect)
+  
+> Redirection의 종류  
+**1) 영구 리다이렉션 : 301,308**</br>
+  + 리소스의 URI가 영구적으로 이동하여 원래 URL를 사용X(검색엔진에서 변경 인지)
+  + `
