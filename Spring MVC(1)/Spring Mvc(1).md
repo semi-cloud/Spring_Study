@@ -2,7 +2,7 @@
 
 ## 웹 애플리케이션 이해
 
-### 웹 시스템 구성
+### :pushpin: 웹 시스템 구성
 :star2: **WEB,WAS,DB**</br>
   + 정적 리소스는 웹 서버가 처리
   + 애플리케이션 로직같은 동적 처리는 WAS에 요청을 위임
@@ -16,7 +16,7 @@
     + 동적 HTML,서블릿,JSP,스프링 MVC...
   
   
-### 서블릿
+### :pushpin: 서블릿
   + 웹 기반의 요청에 대한 동적인 처리가 가능한 Server Side에서 돌아가는 Java Program
     + 웹 애플리케이션 서버를 직접 구현할때 필요한 모든 기능들을 제공
     + ex)TCP/IP 연결대기, HTTP 요청 메시지 파싱, HTTP 응답 메시지 생성 등
@@ -46,9 +46,9 @@
     + 따라서 **공유 변수 사용에 주의**
   + 동시 요청을 위한 멀티스레드 지원
 
-### 동시요청-멀티 쓰레드
+### :pushpin: 동시요청-멀티 쓰레드
 
-#### 쓰레드란?
+#### ✔️ 쓰레드란?
   + 애플리케이션 코드 하나하나를 순차적으로 실행(한번에 하나의 코드라인만)
     + 동시 처리가 필요하면 **요청 시 마다 신규 쓰레드를 생성**해야함
     
@@ -57,7 +57,7 @@
     + 컨텍스트 스위칭 비용이 발생
     + 쓰레드 생성에 제한이 X=> CPU와 메모리 임계점을 넘어 서버가 죽을 수 있음
     
-#### 쓰레드 풀
+#### ✔️ 쓰레드 풀
   + `쓰레드 풀` : 필요한 쓰레드를 쓰레드 풀에 보관하고 관리하며, 생성가능한 쓰레드의 최대치 설정 가능(톰캣 => MAX 200)
     + 쓰레드가 필요 : 풀에서 꺼내서 사용하고 종료시 풀에 다시 반납
     + 최대 쓰레드가 모두 사용중인 경우 : 요청 거절 OR 특정 숫자만큼 대기 설정
@@ -72,7 +72,7 @@
     + 성능 테스트가 필요!
   + BUT, WAS 가 멀티 쓰레드 부분을 처리 => 개발자는 멀티 쓰레드 관련 신경 X
 
-### HTML,HTTP API,CSR,SSR
+### ✔️ HTML,HTTP API,CSR,SSR
   + `정적 리소스` : 고정된 HTML 파일,CSS,JS,이미지,영상 등 브라우저에게 제공
   + `HTML 페이지` : WAS가 동적으로 필요한 HTML 파일 생성해서 브라우저에게 전달
   + `HTTP API`: HTML이 아니라, 데이터 전달(주로 JSON 형식 {KEY : VALUE})
@@ -81,11 +81,11 @@
     + 서버 TO 서버 : 
       + 주문 서버 -> 결제 서버/ 기업간 데이터 통신
   
-✔️ **SSR**
+ 1)**SSR**</br>
   + `서버 사이드 렌더링(SSR)` : HTML 최종 결과를 서버에서 만들어서, 웹 브라우저에 전달 
   + 주로 정적인 화면에 사용 EX) JSP, 타임리프(백엔드 개발자)
   
-✔️ **CSR**
+ 2)**CSR**</br>
   + `클라이언트 사이드 렌더링(CSR)` : HTML 결과를 자바스크립트 이용해 웹브라우저에서 동적으로 생성해 적용
   + 주로 복잡하고 동적인 화면에 사용 EX)React, Vue.js(프론트엔드 개발자)
   
@@ -93,7 +93,7 @@
 
 ## 서블릿
 
-### 프로젝트 생성
+### :pushpin: 프로젝트 생성
   ```java
   @WebServlet(name = "helloServlet", urlPatterns = "/hello")
   public class HelloServlet extends HttpServlet {
@@ -117,9 +117,11 @@
     + `name`: 서블릿 이름
     + `urlPatterns`: URL 매핑
 
-### HttpServletRequest 
+### :pushpin: HttpServletRequest 
 
-#### HTTP 요청 메시지
+#### 부가 제공 기능(Request)
+
+ > HTTP 요청 메시지 
   ```
   POST /save HTTP/1.1           //start line
   Host: localhost:8080          //header
@@ -132,7 +134,6 @@
     + form 파라미터 형식 조회
     + message body 데이터 직접 조회
 
-#### 부가 제공 기능
 1) 임시 저장소 기능</br>
   + 해당 HTTP 요청이 시작부터 끝날 때 까지 유지되는 임시 저장소 기능
     + 저장: `request.setAttribute(name, value)`
@@ -140,5 +141,14 @@
 2)세션 관리 기능</br>
   + `request.getSession(create: true)`
 
+### :pushpin: HTTP 요청 데이터
+
+#### ✔️ GET 쿼리 파라미터
+
+#### ✔️ POST HTML Form
+
+#### ✔️ API 메시지 바디-단순 텍스트
+
+#### ✔️ API 메시지 바디-JSON
 
 
