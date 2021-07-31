@@ -53,9 +53,9 @@
     + 동시 처리가 필요하면 **요청 시 마다 신규 쓰레드를 생성**해야함
     
   > 😥 요청 마다 쓰레드 생성의 단점
-    + 쓰레드 생성 비용은 매우 비쌈 => 응답 속도가 늦어짐
-    + 컨텍스트 스위칭 비용이 발생
-    + 쓰레드 생성에 제한이 X=> CPU와 메모리 임계점을 넘어 서버가 죽을 수 있음
+  + 쓰레드 생성 비용은 매우 비쌈 => 응답 속도가 늦어짐
+  + 컨텍스트 스위칭 비용이 발생
+  + 쓰레드 생성에 제한이 X=> CPU와 메모리 임계점을 넘어 서버가 죽을 수 있음
     
 #### ✔️ 쓰레드 풀
   + `쓰레드 풀` : 필요한 쓰레드를 쓰레드 풀에 보관하고 관리하며, 생성가능한 쓰레드의 최대치 설정 가능(톰캣 => MAX 200)
@@ -78,7 +78,7 @@
   + `HTTP API`: HTML이 아니라, 데이터 전달(주로 JSON 형식 {KEY : VALUE})
     + UI 클라이언트 접점
       + 앱 클라이언트/웹 브라우저에서 자바 스크립트 통한 HTTP API호출/React,Vue.js
-    + 서버 TO 서버 : 
+    + 서버 TO 서버
       + 주문 서버 -> 결제 서버/ 기업간 데이터 통신
   
  1)**SSR**</br>
@@ -138,17 +138,173 @@
   + 해당 HTTP 요청이 시작부터 끝날 때 까지 유지되는 임시 저장소 기능
     + 저장: `request.setAttribute(name, value)`
     + 조회: `request.getAttribute(name)`
-2)세션 관리 기능</br>
+    
+2) 세션 관리 기능</br>
   + `request.getSession(create: true)`
 
 ### :pushpin: HTTP 요청 데이터
 
 #### ✔️ GET 쿼리 파라미터
+  + `request.getParameter` : 쿼리 파라미터 조회
+```java
+@WebServlet(name = "requestParamServlet", urlPatterns = "/request-param")
+public class RequestParamServlet extends HttpServlet {
+
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        //모든 파라미터 조회
+        request.getParameterNames().asIterator()
+            .forEachRemaining(paramName -> System.out.println(paramName +  "=" + request.getParameter(paramName)));
+
+        //단일 파라미터 조회
+        String username = request.getParameter("username");
+        String age = request.getParameter("age");
+        System.out.println("username = " + username);
+        System.out.println("age = " + age);
+
+        //이름이 같은 복수 파라미터 조회
+        String[] usernames = request.getParameterValues("username"); //여러개 있을때 사용
+        for (String name : usernames) {
+            System.out.println("name = " + name);
+        }
+    }
+}
+```
 
 #### ✔️ POST HTML Form
+ + POST 형식으로 보낼때, HTTP 메시지에는 `content-type` 이 지정됌(메시지 바디에 데이터가 존재)
+   + `content-type` : GET 에서 살펴본 쿼리 파라미터 형식과 같음
+      + message body: username=hello&age=20
+ + 따라서, 마찬가지로 `request.getParameter()` 이용해 Form을 통해 전송한 데이터 가져오기 가능!
 
 #### ✔️ API 메시지 바디-단순 텍스트
+ + 'HTTP message body'에 직접 데이터를 담아서 요청(주로 JSON)
+   + POST, PUT, PATCH 에서 사용
+ 
+ ```java
+ @WebServlet(name = "requestBodyStringServlet", urlPatterns = "'/request-body-string")
+public class RequestBodyStringServlet extends HttpServlet {
+
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ServletInputStream inputStream = request.getInputStream();   //바이트 코드
+        String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);//문자열로 변환
+
+        System.out.println("messageBody = " + messageBody);
+
+        response.getWriter().write("ok");
+    }
+}
+```
+  + `inputStream` : byte 코드를 반환하기 때문에 문자로 변환(Charset 지정 필요)
 
 #### ✔️ API 메시지 바디-JSON
+> 요청 메시지
++ content-type: application/json (Body raw, 가장 오른쪽에서 JSON 선택)
++ message body: {"username": "hello", "age": 20}
+
+```java
+@WebServlet(name = "requestBodyJsonServlet", urlPatterns = "/request-body-json")
+public class RequestBodyJsonServlet extends HttpServlet {
+
+    private com.fasterxml.jackson.databind.ObjectMapper objectMapper = new ObjectMapper();
+
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ServletInputStream inputStream = request.getInputStream();   //바이트 코드
+        String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);//문자열로 변환
+
+        HelloData helloData = objectMapper.readValue(messageBody, HelloData.class);
+
+        response.getWriter().write("ok");
+    }
+}
+```
+  + `ObjectMapper` : JSON 변환 라이브러리
+  
+### :pushpin: HTTPServletResponse
+
+#### :heavy_check_mark:기본 사용법
+```@WebServlet(name = "responseHeaderServlet", urlPatterns = "/response-header")
+public class ResponseHeaderServlet extends HttpServlet {
+
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        //[status-line]
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        //[response-headers]
+        response.setHeader("Content-Type", "text/plain;charset=utf-8");
+        response.setHeader("Cache-Control", "no-cache ,no-store, must-revalidate" );
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("my-header", "hello");
+
+        //[header 편의 메서드]
+        content(response);
+        cookie(response);
+        redirect(response);
+
+        //[message body]
+        PrintWriter writer = response.getWriter();
+        writer.println("ok");
+    }
+}
+```
+> Content 편의 메서드
+```java
+ private void content(HttpServletResponse response) {
+        //Content-Type: text/plain;charset=utf-8
+        //Content-Length: 2
+        //response.setHeader("Content-Type", "text/plain;charset=utf-8");
+        response.setContentType("text/plain");
+        response.setCharacterEncoding("utf-8");
+        //response.setContentLength(2); //(생략시 자동 생성)
+    }
+```
+> 쿠키 편의 메서드
+```java
+  private void cookie(HttpServletResponse response) {
+        //response.setHeader("Set-Cookie", "myCookie=good; Max-Age=600");
+        Cookie cookie = new Cookie("myCookie", "good");
+        cookie.setMaxAge(600); //600초
+        response.addCookie(cookie);
+    }
+```
+> redirect 편의 메서드
+```java
+   private void redirect(HttpServletResponse response) throws IOException {
+        //response.setStatus(HttpServletResponse.SC_FOUND); //302
+        //response.setHeader("Location", "/basic/hello-form.html");
+        response.sendRedirect("/basic/hello-form.html");
+    }
+```
+
+#### :heavy_check_mark: HTTP 응답 데이터-html/json
+> html 형식
+  + response.setContentType("text/html")
+> json 형식
+ + response.setContentType("application/json")
+ +  objectMapper 이용해서 객체를 JSON 문자로 변환
+```java
+@WebServlet(name="responseJsonServlet", urlPatterns = "/response-json")
+public class ResponseJsonServlet extends HttpServlet {
+
+    private ObjectMapper objectMapper = new ObjectMapper();
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+
+        HelloData helloData = new HelloData();
+        helloData.setUsername("kim");
+        helloData.setAge(20);
+
+        String result = objectMapper.writeValueAsString(helloData);
+        response.getWriter().write(result);
+    }
+}
+```
+
+
 
 
