@@ -492,3 +492,67 @@ public class MvcMemberSaveServlet extends HttpServlet {
  
 <img src="https://user-images.githubusercontent.com/71436576/127743885-20e4f0e1-6bc2-4465-a92e-f5b2285f16bc.png" width=50% height=50%>
 
+#### 프론트 컨트롤러 도입-V1
+
+> Controller 인터페이스
+```java
+public interface ControllerV1 {
+    void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
+}
+```
+> 인터페이스 구현한 각각 컨트롤러 클래스
+```java
+public class MemberFormControllerV1 implements ControllerV1 {
+    @Override
+    public void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String viewPath = "/WEB-INF/views/new-form.jsp";
+        RequestDispatcher dispatcher = request.getRequestDispatcher(viewPath);
+        dispatcher.forward(request, response);      //다른 서블릿,JSP 로 이동
+    }
+}
+```
+
+> Front Controller 클래스
+```java
+@WebServlet(name="frontControllerServletV1", urlPatterns = "/front-controller/v1/*" )
+public class FrontControllerServletV1 extends HttpServlet {
+
+    private Map<String, ControllerV1> controllerMap = new HashMap<>();
+
+    public FrontControllerServletV1() {
+        controllerMap.put("/front-controller/v1/members/new-from", new MemberFormControllerV1());
+        controllerMap.put("/front-controller/v1/members/save", new MemberSaveControllerV1());
+        controllerMap.put("/front-controller/v1/members", new MemberListControllerV1());
+    }
+
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        //front-controller/v1/members
+        String requestURI = request.getRequestURI();
+
+        //**다형성 => 부모(인터페이스)에 자식이 담길 수 있음!
+        ControllerV1 controller = controllerMap.get(requestURI);
+        if(controller == null){
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        //**다형성 => override 된 process 호출됌
+        controller.process(request,response);
+    }
+}
+```
+  + `/front-controller/v1/*` : /front-controller/v1 를 포함한 하위 모든 요청은 이 서블릿에서 받아들임
+  + `ControllerMap`
+    + `key` : 매핑 URL
+    + `value` : 호출될 컨트롤러
+  + `service()` : requestURI를 조회해서 실제 호출할 컨트롤러를 MAP에서 찾은 후, process()를 통해 컨트롤러 실행
+
+
+#### View 분리-V2
+
+#### Model 추가-V3
+
+####
+
