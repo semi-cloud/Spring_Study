@@ -556,7 +556,7 @@ public class FrontControllerServletV1 extends HttpServlet {
 **1)단순 반복 되는 뷰 로직 분리**</br>
   + 모든 컨트롤러에서 뷰로 이동하는 부분에 중복이 존재 => **별도로 뷰 처리하는 객체 생성**
 
-< img src="https://user-images.githubusercontent.com/71436576/127867213-357edbbe-57f7-44fc-9c68-b1e60f6380fe.png" width=50% height=50%>
+<img src="https://user-images.githubusercontent.com/71436576/127867213-357edbbe-57f7-44fc-9c68-b1e60f6380fe.png" width=50% height=50%>
 
 > 뷰 처리 객체 MyView
 ```java
@@ -616,7 +616,7 @@ public class MemberSaveControllerV2 implements ControllerV2 {
 ```
 #### :heavy_check_mark: Model 추가-V3
 
-< img src="https://user-images.githubusercontent.com/71436576/127869644-d4b88c4d-3df0-4378-a7e2-9de4907f14be.png" width=50% height=50%>
+<img src="https://user-images.githubusercontent.com/71436576/127869644-d4b88c4d-3df0-4378-a7e2-9de4907f14be.png" width=50% height=50%>
 
 **1) Servlet 종속성 제거 : ModelView 추가**</br>
  + 컨트롤러에서 HttpServletRequest를 사용, request.setAttribute()를 통해 데이터 저장하고 뷰에 전달(종속적)
@@ -793,7 +793,7 @@ public class MemberSaveControllerV4 implements ControllerV4 {
 <img src="https://user-images.githubusercontent.com/71436576/127876210-185a98f3-1227-4853-80fb-c4dcb3d16674.png" width=50% height=50%>
 
 **1) Handler Adapter**</br>
- + ㄴㅇ
+
 > Handler Adapter 인터페이스
 ``` java
 public interface MyHandlerAdapter {
@@ -916,3 +916,36 @@ public class FrontControllerServletV5 extends HttpServlet {
  + :star2: Controllerv4는 모델뷰가 아닌 뷰의 '이름'을 반환해야함 => `Adpater` 덕분에 형식을 맞추어 반환 가능!
 
 ## Spring MVC
+
+### :pushpin: Spring MVC 전체 구조
+
+#### 직접 만든 프레임워크 vs 스프링 MVC
+ + FrontController -> `DispatcherServlet`
+ + handlerMappingMap -> `HandlerMapping`
+ + MyHandlerAdapter ->  `HandlerAdapter`
+ + ModelView -> `ModelAndView`
+ + viewResolver -> `ViewResolver`
+ + MyView -> `View` 
+
+#### 스프링 MVC 구조와 동작 순서
+<img src="https://user-images.githubusercontent.com/71436576/127876210-185a98f3-1227-4853-80fb-c4dcb3d16674.png" width=50% height=50%>
+
+1) 핸들러 조회: 핸들러 매핑을 통해 요청 URL에 매핑된 핸들러(컨트롤러)를 조회</br>
+2) 핸들러 어댑터 조회: 핸들러를 실행할 수 있는 핸들러 어댑터를 조회</br>
+3) 핸들러 어댑터 실행: 핸들러 어댑터를 실행</br>
+4) 핸들러 실행: 핸들러 어댑터가 실제 핸들러를 실행</br>
+5) ModelAndView 반환: 핸들러 어댑터는 핸들러가 반환하는 정보를 ModelAndView로 변환해서 반환</br>
+6) viewResolver 호출: 뷰 리졸버를 찾고 실행</br>
+7) View 반환: 뷰 리졸버는 뷰의 논리 이름을 물리 이름으로 바꾸고, 렌더링 역할을 담당하는 뷰 객체를 반환</br>
+8) 뷰 렌더링: 뷰를 통해서 뷰를 렌더링</br>
+
+#### 1)DispatchServlet
+
+
+#### 2)HandlerMapping
+
+
+
+#### 3)HandlerAdapter
+
+### :pushpin: Spring MVC로 전환
