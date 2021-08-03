@@ -9,12 +9,14 @@ https://www.notion.so/Spring-Study-5f739e3c70ca4d859a50a4758825e485
 |**07.07 - 07.14** | <center>스프링 핵심 원리(1) </center> |
 |**07.15 - 07.21** | <center>스프링 핵심 원리(2) </center> |
 |**07.22 - 07.28** | <center>http 웹 기본 지식 </center> |
-|**07.29 - 07.05** | <center>스프링 MVC(1) </center> |
+|**07.29 - 08.06** | <center>스프링 MVC(1) </center> |
+|**08.07 - 08.13** | <center>스프링 MVC(2) </center> |
+
 
  
  
 ## :pencil2: Referenced
-
++ 인프런 스프링 강의
 
 
 ## :pencil2: 단축키
@@ -27,3 +29,5 @@ https://www.notion.so/Spring-Study-5f739e3c70ca4d859a50a4758825e485
  + `Alt + Insert` : 생성자, Getter/Setter 등 코드 자동생성(Lombok으로 대체 가능)
  + `shift + ctrl + enter` : 다음 줄로 이동
  + `ctrl + o` : 메소드 오버라이딩
+ + `ctrl + alt + B` : 해당 코드 구현부로 이동
+ + `ctrl + D` : 라인 복제
