@@ -1248,7 +1248,7 @@ public class RequestHeaderController {
 
 > 잠깐! 먼저 기억하고 가야 할 것이 있음
 
-🌱 **클라이언트에서 서버로 요청 데이터를 전달할 때**
+🌱 **클라이언트에서 서버로 요청 데이터를 전달할 때**</br>
  **1) GET- 쿼리 파라미터**</br>
   + /url?username=hello&age=20
   + 메시지 바디 없이, URL의 쿼리 파라미터에 데이터를 포함해서 전달 
@@ -1366,7 +1366,8 @@ public class HelloData {
  + HTTP 메시지 바디를 통해 데이터가 직접 데이터가 넘어오는 경우는 @RequestParam , @ModelAttribute 를 사용 불가능! 
 
 #### :heavy_check_mark: 단순 텍스트인 경우
-> 단순 텍스트 
+
+> requestBodyStringV1,V2
 ```java
 @Slf4j
 @Controller
@@ -1381,17 +1382,22 @@ public class RequestBodyStringController {
 
         response.getWriter().write("ok");
     }
-
-    @PostMapping("/request-body-string-v2")
+    
+     @PostMapping("/request-body-string-v2")
     public void requestBodyStringV2(InputStream inputStream, Writer responseWriter) throws IOException {
 
         String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
         log.info("messageBody={}", messageBody);
         responseWriter.write("ok");
     }
-
+}
+```
+ + `InputStream(Reader)` : HTTP 요청 메시지 바디의 내용을 직접 조회
+ + `OutputStream(Writer)` : HTTP 응답 메시지의 바디에 직접 결과 출력
+ 
+> requestBodyStringV3 - **HttpEntity** 
+```java
     //message body 에 있는 객체 자동 String 변환 <String>
-    //헤더 정보도 조회 가능
     @PostMapping("/request-body-string-v3")
     public HttpEntity requestBodyStringV3(HttpEntity<String> httpEntity) throws IOException {
 
@@ -1400,7 +1406,18 @@ public class RequestBodyStringController {
 
         return new HttpEntity<>("ok");
     }
+```
+ + `HttpEntity`: **HTTP header, body 정보**를 편리하게 조회 가능
+   + **메시지 바디 정보를 직접 조회 하며, 요청 파라미터 조회 기능과는 관계 X**
+ + 요청, 응답에 모두 사용 가능
+   + 메시지 바디 정보 직접 반환, 헤더 정보 포함 가능
+ + `RequestEntity` , `ResponseEntity` : Http Entity 상속 받은 객체들
+   + HttpMethod, url 정보가 추가 기능(request) / HTTP 상태 코드 설정 가능(response)
+   + `return new ResponseEntity<String>("Hello World", responseHeaders, HttpStatus.CREATED)`
 
+
+> requestBodyStringV4 - **@RequestBody** 
+```java
     @ResponseBody
     @PostMapping("/request-body-string-v4")
     public String requestBodyStringV4(@RequestBody String messageBody) throws IOException {
@@ -1408,14 +1425,62 @@ public class RequestBodyStringController {
         log.info("messageBody={}", messageBody);
         return "ok";
     }
-
-
-
-
 }
 ```
-
+ + `@RequestBody` : HTTP 메시지 바디 정보 편리하게 조회 가능
+   + 헤더 정보 조회 : HttpEntity 를 사용하거나 @RequestHeader 를 사용!
+ 
+ 
 #### :heavy_check_mark: JSON 형식인 경우
+
+> requestBodyJsonV1-Servlet + ObjectMapper 이용
+```java
+@Slf4j
+@Controller
+public class RequestBodyJsonController {
+
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    @PostMapping("/request-body-json-v1")
+    public void requestBodyJsonV1(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ServletInputStream inputStream = request.getInputStream();
+        String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+
+        HelloData data = objectMapper.readValue(messageBody, HelloData.class);
+        
+        response.getWriter().write("ok");
+    }
+}
+```
+ + @RequestBody 이용해 HTTP 메시지에서 데이터 꺼내서 messageBody에 저장하고, objectMapper를 통해서 JSON -> 자바 객체로 변환하는 과정이 너무 불편
+
+> requestBodyJsonV2-**@RequestBody 객체 파라미터**
+```java
+    //객체를 파라미터로 넘김 => 자동으로 <json -> 원하는 문자나 객체>로 변환
+    @ResponseBody
+    @PostMapping("/request-body-json-v2")
+    public String requestBodyJsonV2(@RequestBody HelloData data) throws IOException {
+
+        log.info("username={}, age={}", data.getUsername(), data.getAge());
+        return "ok";
+    }
+```
+ + `@RequestBody 객체 파라미터` : HTTP 메시지 컨버터가 문자/객체(JSON 형식인 경우)로 자동 변환해줌
+ +  애노테이션 생략 시, @ModelAttribute(요청 파라미터 시 사용) 가 적용되어 **생략은 불가능**
+ 
+> requestBodyJsonV3- **@ResponseBody 객체 반환**
+```java
+    @ResponseBody
+    @PostMapping("/request-body-json-v5")
+    public HelloData requestBodyJsonV5(@RequestBody HelloData data) throws IOException {
+
+        log.info("username={}, age={}", data.getUsername(), data.getAge());
+        return data;
+    }
+}
+```
+ + `@RequestBody 요청` : JSON 요청 HTTP 메시지 컨버터 객체
+ + `@ResponseBody 응답` : 객체 HTTP 메시지 컨버터 JSON 응답
 
 
 ### :pushpin: HTTP 응답-정적 리소스,템플릿
