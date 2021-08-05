@@ -1485,15 +1485,102 @@ public class RequestBodyJsonController {
 
 ### :pushpin: HTTP 응답-정적 리소스,템플릿
 
+> 정적 리소스
+ + 정적 리소스 경로 : src/main/resources/static 
+ + 스프링 부트는 다음의 디렉토리에 있는 정적 리소스를 제공
+   + `/static` , `/public`, `/resources` , `/META-INF/resources` 
 
-### :pushpin: HTTP 응답-HTTP API
+> 뷰 템플릿(동적 HTML)
+ + 뷰 템플릿 경로 : src/main/resources/templates
+ 
+```java
+ @RequestMapping("/response-view-v2")
+ public String responseViewV2(Model model) {
+     model.addAttribute("data", "hello!!");
+     return "response/hello";
+ }
+```
+ + 뷰의 논리 이름을 반환하면 `templates/response/hello.html` 뷰 템플릿이 렌더링
+
+### :pushpin: HTTP 응답-HTTP API(메시지 바디)
+
+ + HTTP API를 제공하는 경우에는 HTML이 아니라 데이터 전달 => Message Body에 실어 보냄!
+   + 정적 리소스나 뷰 템플릿을 거치지 않고, 직접 HTTP 응답 메시지를 전달하는 경우
+ + 서블릿을 이용한 초기버전 : `HttpServletResponse`의 response.getWriter().write("ok")로 데이터 전달
+
+> Version2 - **HttpEntity, ResponseEntity(Http Status 추가)**
+```java
+ @GetMapping("/response-body-string-v2")
+ public ResponseEntity<String> responseBodyV2() {
+     return new ResponseEntity<>("ok", HttpStatus.OK);
+ }
+ 
+ @ResponseBody
+ @GetMapping("/response-body-string-v3")
+ public String responseBodyV3() {
+     return "ok";
+ }
+ 
+ @GetMapping("/response-body-json-v1")
+ public ResponseEntity<HelloData> responseBodyJsonV1() {
+     HelloData helloData = new HelloData();
+     helloData.setUsername("userA");
+     helloData.setAge(20);
+     return new ResponseEntity<>(helloData, HttpStatus.OK);
+ }
+```
+ + `@ResponseBody`가 있어야 문자값으로 반환, 없으면 HttpEntity/ResponseEntitiy 객체를 통해서 문자(데이터) 전달해야함
+   + `ResponseEntitiy` : HTTP 응답 코드 설정 가능
+   + `@ResponseStatus(HttpStatus.OK)`는 @ResponseBody와 함께 쓸 수 있음!(응답 코드 설정)
+ + `@ResponseBody` 와 `ResponseEntity` 는 **HTTP 메시지 컨버터** 통해서 HTTP 메시지 직접 입력
+ + :star2: `@RestController` : 해당 컨트롤러에 모두 @ResponseBody 가 적용되는 효과
 
 ### :pushpin: HTTP 메시지 컨버터
 
++ HTTP API처럼 JSON 데이터를 HTTP 메시지 바디에서 직접 읽거나 쓰는것을 편리하게 도와줌
+  + ViewResolver 대신에 HttpMessageConverter가 동작
+
+#### :heavy_check_mark: HTTP 메시지 컨버터 동작 과정
+ 1) `canRead() , canWrite()` : 메시지 컨버터가 **해당 클래스, 미디어타입을 지원하는지 체크**</br>
+ 2) `read() , write()` : 메시지 컨버터를 통해서 메시지를 읽고 쓰는 기능</br>
+
+#### 다음의 경우에 HTTP 메시지 컨버터 적용
+ + HTTP 요청: @RequestBody , HttpEntity(RequestEntity) 
+ + HTTP 응답: @ResponseBody , HttpEntity(ResponseEntity)
+
+> 스프링 부트 기본 메시지 컨버터
+```
+0 = ByteArrayHttpMessageConverter
+1 = StringHttpMessageConverter 
+2 = MappingJackson2HttpMessageConverter
+```
+ + `ByteArrayHttpMessageConverter` : byte[] 데이터를 처리
+   + `지원 클래스 타입`: byte[], `지원 미디어타입`: */* ,
+   + 요청 예) @RequestBody byte[] data
+   + 응답 예) @ResponseBody return byte[] 쓰기, 미디어타입 application/octet-stream
+ + `StringHttpMessageConverter` : String 문자로 데이터를 처리
+   + `지원 클래스 타입`: String , `지원 미디어타입`: */*
+   + 요청 예) @RequestBody String data
+   + 응답 예) @ResponseBody return "ok" 쓰기 미디어타입 text/plain
+ + `MappingJackson2HttpMessageConverter` : application/json
+   + `지원 클래스 타입`: 객체 또는 HashMap , `지원 미디어타입`: application/json 관련
+   + 요청 예) @RequestBody HelloData data
+   + 응답 예) @ResponseBody return helloData 쓰기 미디어타입 application/json 관련
+  
 ### :pushpin: 요청 매핑 핸들러 어댑터 구조
 
-## 
+<img src="https://user-images.githubusercontent.com/71436576/128367963-66cb74af-3dd0-4675-8dda-2144984b2778.png"
+     width=50% height=50%>
 
-
+#### 요청
+ + 애노테이션 기반의 컨트롤러를 처리하는 `RequestMappingHandlerAdaptor` 가 ArgumentResolver 를 호출
+   + `ArgumentResolver` : HTTP Message Converter 사용해서, 컨트롤러(핸들러)가 필요로 하는 다양한 파라미터의 값(객체)을 생성
+   + 다양한 종류의 ArgumentResolver들 존재(ex)@RequestBody 처리, HttpEntitiy 처리..)
+   
+#### 응답
+ + `ReturnValueHandler` :  HTTP 메시지 컨버터를 호출해서 응답 결과를 만듬 
+   + @ResponseBody 와 HttpEntity 를 처리하는 ReturnValueHandler가 존재
+   
+## 스프링 MVC- 웹 페이지 생성하기
 
 
