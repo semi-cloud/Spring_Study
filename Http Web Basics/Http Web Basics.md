@@ -152,13 +152,13 @@
   + 조회는 GET 사용(쿼리 파라미터를 이용해 서버로 데이터 전달)
   + 서버는 쿼리 파라미터를 기반으로 정렬필터해서, 결과를 동적으로 생성
   
- <img src = "https://user-images.githubusercontent.com/71436576/126594288-f7d64cd0-0fff-41ec-a713-cb00c12189d1.png width=50% height=50%>
+ <img src = "https://user-images.githubusercontent.com/71436576/126594288-f7d64cd0-0fff-41ec-a713-cb00c12189d1.png" width=50% height=50%>
 
 3) HTML Form을 통한 데이터 전송</br>
   + POST 전송-저장 
     + form의 내용을 메시지 바디를 통해 전송(key=value, 쿼리 파라미터 형식)
     + 전송 데이터를 url encoding 처리
-  <img src = "https://user-images.githubusercontent.com/71436576/126594348-f4459c9c-e8d5-452e-97df-8ed95c7dd355.png" width=50% height=50%> 
+ <img src = "https://user-images.githubusercontent.com/71436576/126594348-f4459c9c-e8d5-452e-97df-8ed95c7dd355.png" width=50% height=50%> 
   
   + GET 전송-저장 : 쿼리 파라미터 형식
  <img src = "https://user-images.githubusercontent.com/71436576/126594376-7212aa06-5420-4828-b66e-39c36f3cb587.png" width=50% height=50%>  
