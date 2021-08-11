@@ -18,7 +18,7 @@
    + 등록 폼 같은 경우, 빈 객체(해당 오브젝트)를 생성해서 뷰에 넘겨주어야 함
  + `*{...}` : 선택 변수 식, th:object 에서 선택한 객체에 접근
    + ex) ${~~item.Name~~} => * {itemName}
- + :star2: `th:field` : HTML 태그의 **id , name , value 속성을 자동으로 처리**!
+ + :star2: `th:field` : HTML 태그의 **id , name , value 속성을 자동으로 처리**
 
 > 렌더링 전
 <input type="text" th:field="*{itemName}" /></br>
@@ -63,7 +63,7 @@
  </div>
 </div>
 ```
-  + :question2: 실행 결과
+  + ❓ 실행 결과
     + `<input type="hidden" name="_open" value="on"/>` : 타임리프가 자동으로 생성(히든 필드 관련 부분)
     + `value="true"` : 타임리프가 판별해서 <input> 태그에 자동으로 추가
     + `checked="checked"` : 타임리프의 th:field 를 사용하면, 값이 true인 경우 체크를 자동으로 처리
@@ -118,8 +118,8 @@ public Map<String, String> regions() {
             class="form-check-label">부산</label>
  </div>
 ```
- + 서울, 부산 선택한 경우 : regions=SEOUL&_regions=on&regions=BUSAN&_regions=on&_regions=on
- + 지역 선택 X : _regions=on&_regions=on&_regions=on
+ + 서울, 부산 선택한 경우 : `regions=SEOUL&_regions=on&regions=BUSAN&_regions=on&_regions=on`
+ + 지역 선택 X : `_regions=on&_regions=on&_regions=on`
   
 ## 라디오 버튼
 
