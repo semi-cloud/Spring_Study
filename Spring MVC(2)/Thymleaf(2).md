@@ -121,8 +121,76 @@ public Map<String, String> regions() {
  + 서울, 부산 선택한 경우 : `regions=SEOUL&_regions=on&regions=BUSAN&_regions=on&_regions=on`
  + 지역 선택 X : `_regions=on&_regions=on&_regions=on`
   
+ 
 ## 라디오 버튼
+ + 여러 선택지 중, 하나를 선택할때 사용 가능(복수 선택 불가능)
 
+> ItemType
+```java
+ public enum ItemType {
+    BOOK("도서"), FOOD("식품"), ETC("기타");
+       private final String description;
+ 
+       ItemType(String description) {
+         this.description = description;
+       }
+       public String getDescription() {
+         return description;
+    }
+}
+```
+ 
+> FormItemController - 추가
+```html
+ @ModelAttribute("itemTypes")
+ public ItemType[] itemTypes() {
+    return ItemType.values();   //ENUM의 모든 정보 반환 
+ }
+```
+ + 직접 모델에 ENUM을 담아서 뷰에 전달
+
+ > item.html
+ ```html
+ <!-- radio button -->
+<div>
+  <div>상품 종류</div>
+  <div th:each="type : ${itemTypes}" class="form-check form-check-inline">
+     <input type="radio" th:field="${item.itemType}" th:value="$ {type.name()}" class="form-check-input" disabled>
+     <label th:for="${#ids.prev('itemType')}" th:text="${type.description}" class="form-check-label">
+     BOOK
+  </label>
+  </div>
+</div>
+ ```
+ 
 ## 셀렉트 박스
++ 여러 선택지 중, 하나를 선택할 때 사용 가능
+ 
+> FormItemController - 추가
+```java
+ @ModelAttribute("deliveryCodes")
+ public List<DeliveryCode> deliveryCodes() {
+    List<DeliveryCode> deliveryCodes = new ArrayList<>();
+    deliveryCodes.add(new DeliveryCode("FAST", "빠른 배송"));
+    deliveryCodes.add(new DeliveryCode("NORMAL", "일반 배송"));
+    deliveryCodes.add(new DeliveryCode("SLOW", "느린 배송"));
+    return deliveryCodes;
+}
+```
+ + DeliveryCode 객체를 등록 폼/조회/수정 폼 모두 사용하므로 `@ModelAttrbute` 에 적용
 
-
+> addForm.html - 추가
+ 
+```java
+ <!-- SELECT -->
+<div>
+ <div>배송 방식</div>
+ <select th:field="*{deliveryCode}" class="form-select">
+   <option value="">==배송 방식 선택==</option>
+   <option th:each="deliveryCode : ${deliveryCodes}" th:value="${deliveryCode.code}"
+   th:text="${deliveryCode.displayName}">FAST</option>
+ </select>
+</div>
+<hr class="my-4">
+```
+ 
