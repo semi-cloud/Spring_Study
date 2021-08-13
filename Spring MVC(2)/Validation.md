@@ -201,6 +201,87 @@ public FieldError(String objectName, String field, @Nullable Object rejectedValu
  + `th:field`는 정상 상황에는 모델 객체의 값을 사용하지만, 오류가 발생하면 FieldError 에서 보관한 값을 사용해서 값을 출력
 
 ## 오류 코드와 메시지 처리
+ + 오류 메시지를 구분하기 쉽게, `errors.properties`에 담아서 관리
+
+> errors.properties
+```
+required.item.itemName=상품 이름은 필수입니다.
+range.item.price=가격은 {0} ~ {1} 까지 허용합니다.
+max.item.quantity=수량은 최대 {0} 까지 허용합니다.
+totalPriceMin=가격 * 수량의 합은 {0}원 이상이어야 합니다. 현재 값 = {1}
+```
+
+> ValidationItemControllerV1
+ + bindingResult에 `new String[]{"required.item.itemName"}` 형식으로 추가
+
+> ValidationItemControllerV2
+ + `rejectValue()` , `reject()` : FieldError , ObjectError 를 직접 생성하지 않고 검증 오류 처리 가능
+
+```java
+   // 필드 오류
+  if(item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000){
+              bindingResult.rejectValue("price", "range", new Object[]{1000, 1000000}, null);
+   }
+
+  //글로벌 오류
+  if(item.getPrice() != null && item.getQuantity() != null){
+              int resultPrice = item.getPrice() * item.getQuantity();
+              if(resultPrice < 10000 ){
+                  bindingResult.reject("totalPrice", new Object[]{1000, resultPrice}, null);
+              }
+    }
+
+```
+ +  BindngResult는 본인이 검증해야 할 객체인 target을 이미 알고 있음 => item에 대한 정보 필요 X
+ +  `range.item.price` 대신 `range`만 입력해도 오류 메시지가 정상 출력됌
+
+### ✔️ 오류 메시지 생성: MessageCodesResolver
+ + `MessageCodesResolver` : 검증 오류 코드로 , 메시지 코드들을 생성
+   + Interface이며 기본 구현체는 DefaultMessageCodesResolver
+ 
+#### DefaultMessageCodesResolver 메시지 생성 규칙
+
+> 객체 오류
+```
+ 1.: code + "." + object name
+ 2.: code
+ 
+ ex)reject("totalPriceMin")
+ totalPriceMin.item       //우선순위 순서
+ totalPriceMin 
+ 
+ ```
+
+> 필드 오류
+```
+ 1.: code + "." + object name + "." + field
+ 2.: code + "." + field
+ 3.: code + "." + field type
+ 4.: code
+
+ ex)rejectValue("itemName", "required")
+ required.item.itemName        //우선순위 순서
+ required.itemName
+ required.java.lang.String
+ required
+```
+ + `rejectValue()`는 내부에서 MessageCodesResolver를 사용해 메시지 코드들 자동으로 생성
+ 
+#### 오류 코드 전략
+:star2: **핵심은 구체적인 것이 우선순위를 가지게 됌!** :star2: </br>
+  + 크게 중요하지 않은 메시지: 범용성 있는 requried 같은 메시지로 끝냄
+  + 정말 중요한 메시지 : 필요할 때 구체적으로 적어서 사용하는 방식이 더 효과적!
+ 
+> errors.properties에 오류 코드 전략 도입
+
+
+> ValidationItemControllerV3
+
+> ValidationItemControllerV4
+
+> ValidationItemControllerV5
+
+
 
 ## Validator 분리
 
