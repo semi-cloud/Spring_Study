@@ -255,7 +255,9 @@ public class WebConfig implements WebMvcConfigurer {
 
   }
 ```
-
+ + `@Login` : 직접 만든 ArgumentResolver가 동작하여, 자동으로 세션에 있는 로그인 회원을 찾아줌
+   + 없다면, null을 반환
+   
 > LoginMemberArgumentResolver.java
 ```java
  @Slf4j
@@ -282,3 +284,8 @@ public class WebConfig implements WebMvcConfigurer {
      }
  }
 ```
+ + `supportsParameter()` : `@Login` 애노테이션이 있으면서 Member 타입이면 해당 ArgumentResolver가 사용됌
+ + `resolveArgument()` : 컨트롤러 호출 직전에 호출 되어, 필요한 파라미터 정보를 생성
+   + 세션에 있는 로그인 회원 정보인 member 객체를 찾아서 반환
+   + 스프링MVC는 컨트롤러의 메서드를 호출하면서 반환된 Member 객체 파라미터로 전달
+
