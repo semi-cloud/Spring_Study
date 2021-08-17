@@ -245,3 +245,116 @@ public class BadRequestException extends RuntimeException {
 🤨 _하지만, 두 방식 모두 API 오류 응답의 경우 ModelAndView를 반환해, 직접 데이터를 변환해 넣어야하는 문제 존재!_
 
 ### :heavy_check_mark: ExceptionHandlerExceptionResolver
+ + `@ExceptionHandler` : API 예외 처리 문제점의 해결책이며, 실무에서 사용하는 방식
+
+> 예외 발생시 API 응답으로 사용하는 객체
+```java
+  @Data
+  @AllArgsConstructor
+  public class ErrorResult {
+      private String code;
+      private String message;
+  }
+```
+
+> ApiExceptionV2Controller(1)
+```java
+    //ExceptionHandlerExceptionResolver 가 처리
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ErrorResult illegalExHandle(IllegalArgumentException e){
+        return new ErrorResult("BAD", e.getMessage());  //정상 흐름(200)
+    }
+```
+#### 실행 흐름: IllegalArgumentException
+1) `IllegalArgumentException` 예외가 컨트롤러 밖으로 전달</br>
+2) `ExceptionResolver`가 작동하고 우선순위가 가장 높은 `ExceptionHandlerExceptionResolver`가 실행되며, 컨트롤러에 해당 예외를 처리 가능한 `@ExceptionHandler`가 있는지 확인</br>
+3) `@Responsebody`가 적용되어,  HTTP Converter를 이용해 응답이 JSON으로 반환됌</br>
+4) `@ResponseStatus` : HTTP 상태 코드 지정, 여기서는 400으로 응답</br>
+
+:star2: _상태 코드를 따로 지정안해주면, 정상 흐름 처리되어 200 OK가 코드로 지정됌_:star2:
+
+> ApiExceptionV2Controller(2)
+```java
+    @ExceptionHandler 
+    public ResponseEntity<ErrorResult> userHandler(UserException e){   //생략 가능
+        ErrorResult errorResult = new ErrorResult("USER-EX", e.getMessage());
+        return new ResponseEntity<>(errorResult, HttpStatus.BAD_REQUEST);
+    }
+ ```
+ +  `ResponseEntity` : HTTP 컨버터 사용해 HTTP 메시지 바디에 직접 응답
+ 
+ > ApiExceptionV2Controller(3)
+```java
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)    //상태 코드 500
+    @ExceptionHandler
+    public ErrorResult exHandler(Exception e){  //위에서 처리 못하는 에러들(공통 처리 에러)
+        return new ErrorResult("EX", "내부 오류");
+    }
+```
+ + ` @ExceptionHandler`: 해당 컨트롤러에서 처리하고 싶은 예외를 지정(예외의 자식 클래스 포함)
+   + `Exception` : 예외의 부모 클래스, 구체적 자식 클래스에서 처리 못하는 예외들이 넘어옴
+ + `RuntimeException`이 예외로 던져지면, 이 메소드 호출 
+
+## @ControllerAdvice
+ + `@ControllerAdvice` : 하나의 Controller에 모여있던 정상 코드와, 예외 처리 코드를 분리 가능
+
+> ExControllerAdvice
+```java
+@RestControllerAdvice
+public class ExControllerAdvice {
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ErrorResult illegalExHandler(IllegalArgumentException e){
+        return new ErrorResult("BAD", e.getMessage());  //정상 흐름(200)
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResult> userHandler(UserException e){
+        ErrorResult errorResult = new ErrorResult("USER-EX", e.getMessage());
+        return new ResponseEntity<>(errorResult, HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler
+    public ErrorResult exHandler(Exception e){  //위에서 처리 못하는 에러들(공통 처리 에러)
+        return new ErrorResult("EX", "내부 오류");
+
+    }
+}
+```
+ + `@RestControllerAdvice` : `@RestController` + `@ControlerAdvice`
+ + 대상을 지정하지 않으면, 모든 컨트롤러에 적용됌
+   + `@ControllerAdvice(annotations = RestController.class)`
+   + `@ControllerAdvice("org.example.controllers")`
+   
+> ApiExceptionV2Controller
+```java
+@RestController
+public class ApiExceptionV2Controller {
+    //예외 처리 부분 분리
+    @GetMapping("/api2/members/{id}")
+    public ApiExceptionController.MemberDto getMember(@PathVariable("id") String id){
+        if(id.equals("ex")){
+            throw new RuntimeException("잘못된 사용자");
+        }
+
+        if(id.equals("bad")){  
+            throw new IllegalArgumentException("잘못된 입력 값");
+        }
+
+        if(id.equals("uer-ex")){
+            throw new UserException("사용자 오류");
+        }
+        return new ApiExceptionController.MemberDto(id, "hello " + id);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class MemberDto{
+        private  String memberId;
+        private String name;
+    }
+}
+```
