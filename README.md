@@ -1,7 +1,7 @@
 # :herb: Spring_Study
 2021.07~09 웹 백엔드
 
-https://www.notion.so/Spring-Study-5f739e3c70ca4d859a50a4758825e485
+[NOTION](https://www.notion.so/Spring-Study-5f739e3c70ca4d859a50a4758825e485 "스프링 노션")
 
 |  <center>기간</center> |  <center>진도 현황</center> | 
 |:--------|:--------:|
@@ -12,12 +12,9 @@ https://www.notion.so/Spring-Study-5f739e3c70ca4d859a50a4758825e485
 |**07.29 - 08.06** | <center>스프링 MVC(1) </center> |
 |**08.07 - 08.13** | <center>스프링 MVC(2) </center> |
 
-
  
- 
-## :pencil2: Referenced
+## 📖 Referenced
 + 인프런 스프링 강의
-
 
 ## :pencil2: 단축키
  > Intellij 단축키 모음
