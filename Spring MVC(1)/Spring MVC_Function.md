@@ -158,7 +158,7 @@ public class RequestHeaderController {
   + HTTP API에서 주로 사용, JSON, XML, TEXT (주로 json 형식)
   + POST, PUT, PATCH
 
-:star2:**결국 GET 이던, POST던 둘다 요청 파라미터(Request Parameter) 조회**
+:star2:**_결국 GET 이던, POST던 둘다 요청 파라미터(Request Parameter) 조회_**
  
 > requestParamV1
 ```java
@@ -213,8 +213,8 @@ public class RequestParamController {
     }
 ```
  + `@RequestParam(required = true)` : 파라미터 필수 여부(기본값)
- + 주의 1 : '/request-param?username=' 형태로 들어오면 빈 문자로 에러가 나지 않음
- + 주의 2 : `(required = false)`인 경우, null 값을 받을 수 있는 Integer 변경 혹은 defaultValue 사용 해야함
+ + 주의(1): '/request-param?username=' 형태로 들어오면 빈 문자로 에러가 나지 않음
+ + 주의(2): `(required = false)`인 경우, null 값을 받을 수 있는 Integer 변경 혹은 defaultValue 사용 해야함
    + @RequestParam(required = true, **defaultValue = "guest"**) String username
    + @RequestParam(required = false, **defaultValue = "-1"**) int age
 
@@ -260,7 +260,7 @@ public class HelloData {
 호출해서 파라미터의 값을 입력(바인딩)
 
 ### :pushpin: HTTP 요청 파라미터-HTTP API
- + HTTP 메시지 바디를 통해 데이터가 직접 데이터가 넘어오는 경우는 @RequestParam , @ModelAttribute 를 사용 불가능! 
+ + _HTTP 메시지 바디를 통해 데이터가 직접 데이터가 넘어오는 경우는 @RequestParam , @ModelAttribute 를 사용 불가능!_
 
 #### :heavy_check_mark: 단순 텍스트인 경우
 
@@ -470,11 +470,11 @@ public class RequestBodyJsonController {
 <img src="https://user-images.githubusercontent.com/71436576/128367963-66cb74af-3dd0-4675-8dda-2144984b2778.png"
      width=50% height=50%>
 
-#### 요청
+#### ✔️ 요청
  + 애노테이션 기반의 컨트롤러를 처리하는 `RequestMappingHandlerAdaptor` 가 ArgumentResolver 를 호출
    + `ArgumentResolver` : HTTP Message Converter 사용해서, 컨트롤러(핸들러)가 필요로 하는 다양한 파라미터의 값(객체)을 생성
-   + 다양한 종류의 ArgumentResolver들 존재(ex)@RequestBody 처리, HttpEntitiy 처리..)
+   + 다양한 종류의 ArgumentResolver들 존재(ex)@RequestBody 처리, HttpEntity 처리..)
    
-#### 응답
+#### ✔️ 응답
  + `ReturnValueHandler` :  HTTP 메시지 컨버터를 호출해서 응답 결과를 만듬 
    + @ResponseBody 와 HttpEntity 를 처리하는 ReturnValueHandler가 존재
