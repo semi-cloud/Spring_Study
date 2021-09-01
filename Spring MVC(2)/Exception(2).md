@@ -142,7 +142,7 @@ public class MyHandlerExceptionResolver implements HandlerExceptionResolver {
    + `JSON` => API 응답 처리 가능
 
 ### :heavy_check_mark: HandlerExceptionResolver 활용
- + WAS까지 예외가 던져지고,  오류 페이지 정보를 찾아서 다시 `/error` 를 호출하는 과정은 너무 복잡
+ + _WAS_ 까지 예외가 던져지고,  오류 페이지 정보를 찾아서 다시 `/error` 를 호출하는 과정은 너무 복잡
  + `ExceptionResolver` 를 활용하면 _스프링 MVC에서 예외처리를 완전히 끝낼 수 있음_
  
 > UserHandlerExceptionResolver
@@ -211,9 +211,9 @@ public class BadRequestException extends RuntimeException {
 ```
   + 컨트롤러 밖으로 예외가 던져지면, `ResponseStatusExceptionResolver` 예외가 해당 애노테이션을 확인
     + 오류 코드를 변경하고(ex)_HttpStatus.BAD_REQUEST_), 메시지도 담음
-  + :pencil2: 내부에서 `response.sendError` 호출 => WAS에서 오류 페이지(`/error`) 내부 요청
   + `error.bad` : reason 을 MessageSource 에서 찾는 기능 제공
     + `messages.properties`에 추가
+  + :bulb: 내부에서 `response.sendError` 호출 => WAS에서 오류 페이지(`/error`) 내부 요청
     
 #### 2)ResponseStatusException
  + `ResponseStatusException`: 개발자가 직접 변경하지 못하는 예외처럼, 조건에 따라 동적으로 변경 가능
@@ -240,7 +240,7 @@ public class BadRequestException extends RuntimeException {
         return "ok";
     }
 ```
- + :pencil2: 내부에서 `response.sendError` 호출 => WAS에서 오류 페이지(`/error`)를 내부 요청
+ + :bulb: 내부에서 `response.sendError` 호출 => WAS에서 오류 페이지(`/error`)를 내부 요청
 
 🤨 _하지만, 두 방식 모두 API 오류 응답의 경우 ModelAndView를 반환해, 직접 데이터를 변환해 넣어야하는 문제 존재!_
 
