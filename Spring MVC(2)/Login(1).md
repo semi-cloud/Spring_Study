@@ -192,7 +192,8 @@ sessionId로 응답 쿠키를 생성해서 클라이언트에 전달
 
 ### :heavy_check_mark: HTTPSession 소개
  + SessionManager와 같은 방식으로 동작
- + `쿠키 이름` : JESSIONID `값` : 추청 불가능 랜덤 값
+ + `쿠키 이름` : JSESSIONID
+ +  `값` : 추청 불가능 랜덤 값
    + `Cookie: JSESSIONID=5B78E23B513F50164D6FDD8C97B0AD05`
  
 > LoginVersion3
