@@ -97,18 +97,16 @@ public class LogTestController {
   + `produces` : **HTTP 요청의 Accept 헤더**를 기반으로 미디어 타입으로 매핑
     + 맞지 않으면, HTTP 406 상태코드(Not Acceptable)을 반환
  
-## HTTP 요청 데이터 조회
+## HTTP 요청 데이터 조회 : 기본, 헤더 조회
 
-### :pushpin: HTTP 요청- 기본, 헤더 조회
-
-#### 회원 관리 API(매핑)
+#### ✔️ 회원 관리 API(매핑)
 + 회원 목록 조회: GET /users
 + 회원 등록: POST /users
 + 회원 조회: GET /users/{userId}
 + 회원 수정: PATCH /users/{userId}
 + 회원 삭제: DELETE /users/{userId}
 
-#### HTTP 요청 정보 조회
+#### ✔️  HTTP 요청 정보 조회
 > HTTP 요청 정보들 조회하는 Controller
 ```java
 @Slf4j
@@ -141,20 +139,20 @@ public class RequestHeaderController {
 + `@RequestHeader("host") String host` : 특정 HTTP 헤더 조회
 
 
-### :pushpin: HTTP 요청 파라미터-쿼리,HTML FORM
+## HTTP 요청 파라미터(1): Query, HTML FORM
 
 > 잠깐! 먼저 기억하고 가야 할 것이 있음
 
-🌱 **클라이언트에서 서버로 요청 데이터를 전달할 때**</br>
- **1) GET- 쿼리 파라미터**</br>
+### :pushpin: 클라이언트에서 서버로 요청 데이터를 전달할 때
+#### ✔️ 1) GET- 쿼리 파라미터
   + /url?username=hello&age=20
   + 메시지 바디 없이, URL의 쿼리 파라미터에 데이터를 포함해서 전달 
   
- **2) POST- HTML Form**</br>
+#### ✔️ 2) POST- HTML Form
   + content-type: application/x-www-form-urlencoded
   + 메시지 바디에 쿼리 파리미터 형식으로 전달 username=hello&age=20
   
- **3) HTTP message body**</br>
+#### ✔️ 3) HTTP message body
   + HTTP API에서 주로 사용, JSON, XML, TEXT (주로 json 형식)
   + POST, PUT, PATCH
 
@@ -177,7 +175,7 @@ public class RequestParamController {
     }
 }
 ```
-#### :heavy_check_mark: HTTP 요청 파라미터 - @RequestParam
+### :pushpin: HTTP 요청 파라미터(1-1): @RequestParam
 + 스프링에서 제공하는 `@RequestParam`을 통해 편리하게 사용 가능
 + String, int, Integer와 같은 단순 타입에 사용!
 
@@ -200,7 +198,7 @@ public class RequestParamController {
  + `@ResponseBody` : View 조회를 무시하고, HTTP message body에 직접 해당 내용 입력
 
 
->  requestParamReuquired-파라미터 필수 여부
+>  requestParamReuquired: 파라미터 필수 여부
 ```java
     //int = null X 객체타입만 null 가능해서 Integer 사용해야해!
     @ResponseBody  
@@ -219,7 +217,7 @@ public class RequestParamController {
    + @RequestParam(required = false, **defaultValue = "-1"**) int age
 
 
-> requestParamMap-파라미터 Map으로 조회
+> requestParamMap: 파라미터 Map으로 조회
 ```java
     @ResponseBody  //==restController
     @RequestMapping("/request-param-default")
@@ -229,7 +227,7 @@ public class RequestParamController {
     }
 ```
 
-#### :heavy_check_mark: HTTP 요청 파라미터 - @ModelAttribute
+### :pushpin: HTTP 요청 파라미터(1-2): @ModelAttribute
 
 + 요청 파라미터 받아서 필요한 객체 만들고, 값을 객체에 넣어주는 과정을 자동화해줌
 + String, int, Integer와 같은 단순 타입 외의 나머지 타입에 사용!
@@ -255,16 +253,16 @@ public class HelloData {
         return "ok";
     }
 ```
- + `@ModelAttribute ` : HelloData 객체의 생성 + 객체에 값을 넣어줌
+ + `@ModelAttribute ` : _**HelloData 객체의 생성 + 객체에 값을 넣어줌**_
    + 요청 파라미터의 이름으로 HelloData 객체의 프로퍼티를 찾은 후, 해당 프로퍼티의 setter를
 호출해서 파라미터의 값을 입력(바인딩)
 
-### :pushpin: HTTP 요청 파라미터-HTTP API
+## HTTP 요청 파라미터(2): HTTP API
  + _HTTP 메시지 바디를 통해 데이터가 직접 데이터가 넘어오는 경우는 @RequestParam , @ModelAttribute 를 사용 불가능!_
 
-#### :heavy_check_mark: 단순 텍스트인 경우
+### 📌 단순 텍스트인 경우
 
-> requestBodyStringV1,V2
+> requestBodyStringV1&V2
 ```java
 @Slf4j
 @Controller
@@ -291,8 +289,10 @@ public class RequestBodyStringController {
 ```
  + `InputStream(Reader)` : HTTP 요청 메시지 바디의 내용을 직접 조회
  + `OutputStream(Writer)` : HTTP 응답 메시지의 바디에 직접 결과 출력
- 
-> requestBodyStringV3 - **HttpEntity** 
+
+### ✔️ HttpEntity 사용
+
+> requestBodyStringV3
 ```java
     //message body 에 있는 객체 자동 String 변환 <String>
     @PostMapping("/request-body-string-v3")
@@ -312,8 +312,9 @@ public class RequestBodyStringController {
    + HttpMethod, url 정보가 추가 기능(request) / HTTP 상태 코드 설정 가능(response)
    + `return new ResponseEntity<String>("Hello World", responseHeaders, HttpStatus.CREATED)`
 
+### ✔️ @RequestBody
 
-> requestBodyStringV4 - **@RequestBody** 
+> requestBodyStringV4
 ```java
     @ResponseBody
     @PostMapping("/request-body-string-v4")
@@ -327,10 +328,11 @@ public class RequestBodyStringController {
  + `@RequestBody` : HTTP 메시지 바디 정보 편리하게 조회 가능
    + 헤더 정보 조회 : HttpEntity 를 사용하거나 @RequestHeader 를 사용!
  
- 
-#### :heavy_check_mark: JSON 형식인 경우
+### 📌 JSON 형식인 경우
 
-> requestBodyJsonV1-Servlet + ObjectMapper 이용
+### ✔️ (1): Servlet + ObjectMapper
+
+> requestBodyJsonV1: Servlet + ObjectMapper 이용
 ```java
 @Slf4j
 @Controller
@@ -351,7 +353,9 @@ public class RequestBodyJsonController {
 ```
  + @RequestBody 이용해 HTTP 메시지에서 데이터 꺼내서 messageBody에 저장하고, objectMapper를 통해서 JSON -> 자바 객체로 변환하는 과정이 너무 불편
 
-> requestBodyJsonV2-**@RequestBody 객체 파라미터**
+### ✔️ (2): @RequestBody
+
+> requestBodyJsonV2: @RequestBody 객체 파라미터
 ```java
     //객체를 파라미터로 넘김 => 자동으로 <json -> 원하는 문자나 객체>로 변환
     @ResponseBody
@@ -365,7 +369,9 @@ public class RequestBodyJsonController {
  + `@RequestBody 객체 파라미터` : HTTP 메시지 컨버터가 문자/객체(JSON 형식인 경우)로 자동 변환해줌
  +  애노테이션 생략 시, @ModelAttribute(요청 파라미터 시 사용) 가 적용되어 **생략은 불가능**
  
-> requestBodyJsonV3- **@ResponseBody 객체 반환**
+ ### ✔️ (3): @ResponseBody
+ 
+> requestBodyJsonV3: @ResponseBody 객체 반환
 ```java
     @ResponseBody
     @PostMapping("/request-body-json-v5")
@@ -381,7 +387,7 @@ public class RequestBodyJsonController {
 
 ## HTTP 응답 데이터 조회
 
-### :pushpin: HTTP 응답-정적 리소스,템플릿
+### :pushpin: HTTP 응답: 정적 리소스,템플릿
 
 > 정적 리소스
  + 정적 리소스 경로 : src/main/resources/static 
@@ -400,13 +406,15 @@ public class RequestBodyJsonController {
 ```
  + 뷰의 논리 이름을 반환하면 `templates/response/hello.html` 뷰 템플릿이 렌더링
 
-### :pushpin: HTTP 응답-HTTP API(메시지 바디)
+### :pushpin: HTTP 응답: HTTP API(메시지 바디)
 
  + HTTP API를 제공하는 경우에는 HTML이 아니라 데이터 전달 => Message Body에 실어 보냄!
    + 정적 리소스나 뷰 템플릿을 거치지 않고, 직접 HTTP 응답 메시지를 전달하는 경우
  + 서블릿을 이용한 초기버전 : `HttpServletResponse`의 response.getWriter().write("ok")로 데이터 전달
 
-> Version2 - **HttpEntity, ResponseEntity(Http Status 추가)**
+### ✔️ (1): HttpEntity, ResponseEntity
+
+> Version2: HttpEntity, ResponseEntity(Http Status 추가)
 ```java
  @GetMapping("/response-body-string-v2")
  public ResponseEntity<String> responseBodyV2() {
@@ -428,10 +436,11 @@ public class RequestBodyJsonController {
  }
 ```
  + `@ResponseBody`가 있어야 문자값으로 반환, 없으면 HttpEntity/ResponseEntitiy 객체를 통해서 문자(데이터) 전달해야함
-   + `ResponseEntitiy` : HTTP 응답 코드 설정 가능
+   + `ResponseEntitiy` :  _**HTTP 응답 코드 설정 가능**_
    + `@ResponseStatus(HttpStatus.OK)`는 @ResponseBody와 함께 쓸 수 있음!(응답 코드 설정)
  + `@ResponseBody` 와 `ResponseEntity` 는 **HTTP 메시지 컨버터** 통해서 HTTP 메시지 직접 입력
- + :star2: `@RestController` : 해당 컨트롤러에 모두 @ResponseBody 가 적용되는 효과
+ + :star2: `@RestController` : @Controller + @ResponseBody
+   + 해당 컨트롤러에 모두 @ResponseBody 가 적용되는 효과
 
 ## HTTP 메시지 컨버터
 
