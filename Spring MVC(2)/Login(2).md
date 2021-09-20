@@ -44,8 +44,8 @@ public class WebConfig {
  + `addUrlPatterns("/*")` : 필터를 적용할 URL 패턴을 지정
  
 ## Filter 구현
- + 모든 컨트롤러에 로그인 인증 여부 코드를 작성하는 것은 비효율적
-   + 로그인 하지 않은 사용자는, 상품 관리에 접근 불가능! 
+ + ☹️ _모든 컨트롤러에 로그인 인증 여부 코드를 작성하는 것은 비효율적..!_
+   + 로그인 하지 않은 사용자는, 상품 관리에 접근 불가능 하도록 구현해야함 
    
 > LoginCheckFilter - 인증 체크 필터
 ```java
@@ -64,17 +64,20 @@ public class LoginCheckFilter implements Filter {
         try{
             log.info("인증 체크 필터 시작{}", requestURI);
 
-            if(isLoginCheckPath(requestURI)){
+            if(isLoginCheckPath(requestURI)){      //로그인 인증이 필요한 경로
                 log.info("인증 체크 로직 실행{}", requestURI);
+                
                 HttpSession session = httpRequest.getSession(false);
-                if(session == null || session.getAttribute(SessionConst.LOGIN_MEMBER) == null{
+                
+                if(session == null || session.getAttribute(SessionConst.LOGIN_MEMBER) == null){
                     log.info("미인증 사용자 요청 {}", requestURI );
+                    
                     //로그인으로 redirect
                     httpResponse.sendRedirect("/login?redirectURL=" + requestURI);
-                    return;      //여기서 끝내야함(중요)
+                    return;                       //여기서 끝내야함(중요)
                 }
             }
-            chain.doFilter(request,response);
+            chain.doFilter(request,response);   
         }catch(Exception e){
             throw e;  
         }finally{
@@ -88,11 +91,11 @@ public class LoginCheckFilter implements Filter {
     }
 }
 ```
- + `whitelist` : 인증과 무관하게 항상 허용하는 경로들
+ + `whitelist` : 인증과 무관하게 **항상 허용하는 경로들**
    + whitelist 제외한 나머지 모든 경로에 인증 체크 로직 적용 필요
  + `httpResponse.sendRedirect("/login?redirectURL=" + requestURI)` : 현재 요청한 경로인 requestURI 를 /login 에 쿼리 파라미터로 함께 전달
- + `return` : 이후 필터는 물론 서블릿, 컨트롤러의 호출을 막음
-   + redirect로 응답까지만 해주고, 요청이 끝나 이후 비즈니스 로직 동작에는 영향을 주지 않도록 해야함
+ + `return` : **이후 필터는 물론 서블릿, 컨트롤러의 호출을 막음**
+   + redirect로 응답까지만 해주고, _요청이 끝나 이후 비즈니스 로직 동작에는 영향을 주지 않도록 해야함_
 
 > LoginControllerV4
 ```java
@@ -101,6 +104,7 @@ public String loginV4(...@RequestParam(defaultValue = "/") String redirectURL..)
 
    //로그인 성공 시
    return "redirect:" + redirectURL;   //없으면 홈(/)으로, 있으면 기존 화면으로
+}
 ```
 
 ## Spring 인터셉터
@@ -114,7 +118,7 @@ public String loginV4(...@RequestParam(defaultValue = "/") String redirectURL..)
  X) // 비 로그인 사용자
 ```
  + 서블릿 :  `DispatcherServlet`
- + 인터셉터는 디스패처 서블릿에서 시작해, 컨트롤러 호출 직전에 호출됌
+ + **인터셉터**는 디스패처 서블릿에서 시작해, **컨트롤러 호출 직전에 호출됌**
  + 스프링 인터셉터는 chain 형식
 
 ### Spring 인터셉터 Interface
